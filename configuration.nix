@@ -103,6 +103,7 @@ in
   };
 
   services.displayManager.plasma-login-manager.enable = true;
+  services.displayManager.defaultSession = "hyprland";
 
   services.geoclue2.enable = true;
 
