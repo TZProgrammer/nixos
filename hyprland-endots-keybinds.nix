@@ -32,6 +32,9 @@
     # --- Close window ---
     bind = SUPER, Q, killactive
 
+    # --- Reload config ---
+    bind = SUPER CTRL, r, exec, hyprctl reload
+
     # --- App shortcuts ---
     bind = SUPER CTRL, d, exec, vesktop
     bind = SUPER CTRL, f, exec, firefox
