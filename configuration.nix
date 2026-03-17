@@ -96,15 +96,25 @@ in
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable the KDE Plasma Desktop Environment.
-  services.desktopManager.plasma6.enable = true;
-  services.displayManager.plasma-login-manager.enable = true;
+  # Hyprland
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+  };
 
-  # Grant the plasma-login-manager greeter GPU access (fallback for when logind doesn't)
-  users.users.plasmalogin.extraGroups = [ "video" "render" ];
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+  };
+
+  services.geoclue2.enable = true;
+
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
+    extraPortals = [
+      pkgs.xdg-desktop-portal-hyprland
+      pkgs.xdg-desktop-portal-gtk
+    ];
   };
 
   hardware.bluetooth = {
@@ -154,7 +164,7 @@ in
     QT_QPA_PLATFORM = "wayland;xcb";
     GDK_BACKEND = "wayland,x11";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    KWIN_FORCE_SW_CURSOR= "1";
+    WLR_NO_HARDWARE_CURSORS = "1"; # Required for NVIDIA
   };
 
   # Power profiles daemon for KDE/ROG integration
@@ -213,9 +223,7 @@ in
     shell = pkgs.zsh;
     description = "Thomas Zeger";
     extraGroups = [ "networkmanager" "wheel" "input" ];
-    packages = with pkgs; [
-      kdePackages.kate
-    ];
+    packages = with pkgs; [];
   };
 
   programs.steam = {

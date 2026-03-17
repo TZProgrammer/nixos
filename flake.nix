@@ -40,6 +40,12 @@
       flake = false;
     };
 
+    # end-4's Hyprland dotfiles via illogical-flake wrapper
+    illogical-flake = {
+      url = "github:soymou/illogical-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager, ... }@inputs: {
