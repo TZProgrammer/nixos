@@ -15,6 +15,12 @@
     bind = SUPER, k, movefocus, u
     bind = SUPER, j, movefocus, d
 
+    # --- Move window in direction (meta+shift+hjkl) ---
+    bind = SUPER SHIFT, h, movewindow, l
+    bind = SUPER SHIFT, l, movewindow, r
+    bind = SUPER SHIFT, k, movewindow, u
+    bind = SUPER SHIFT, j, movewindow, d
+
     # --- Monitor focus / move window to monitor ---
     bind = SUPER, TAB, focusmonitor, +1
     bind = SUPER SHIFT, TAB, movewindow, mon:+1
