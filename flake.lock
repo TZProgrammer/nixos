@@ -1,0 +1,151 @@
+{
+  "nodes": {
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773666768,
+        "narHash": "sha256-7XvLaFMQOsfWrK+msO0Oqe5CeNYsAlSGjrl5y14gA6w=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "ca53f083dbd4c83dd5dca8a3099374708e155c32",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "ref": "master",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "kanata-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1758474080,
+        "narHash": "sha256-I0as6BW0Lrm09cZ0fFsb8E8YrvD9InuHg9cKjeR/46E=",
+        "ref": "refs/heads/main",
+        "rev": "c8135d5af3986fed5626852f5cfb0026ebf11ff0",
+        "revCount": 26,
+        "type": "git",
+        "url": "ssh://git@github.com/TZProgrammer/kanata-configuration.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/TZProgrammer/kanata-configuration.git"
+      }
+    },
+    "lazyvim-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1770955851,
+        "narHash": "sha256-tiO+WxCytDvjmJbvnYRC1sLBZuGAt+CE1IuutasVhgw=",
+        "owner": "TZProgrammer",
+        "repo": "LazyVim",
+        "rev": "f965596772fe37e9c1a23c2ff53929eeca128dd6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "TZProgrammer",
+        "repo": "LazyVim",
+        "type": "github"
+      }
+    },
+    "nixos-hardware": {
+      "locked": {
+        "lastModified": 1773533765,
+        "narHash": "sha256-qonGfS2lzCgCl59Zl63jF6dIRRpvW3AJooBGMaXjHiY=",
+        "owner": "NixOS",
+        "repo": "nixos-hardware",
+        "rev": "f8e82243fd601afb9f59ad230958bd073795cbfe",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "master",
+        "repo": "nixos-hardware",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1773579282,
+        "narHash": "sha256-LWvZj9Bvm1EuoO6zbX4yjZebwnZNfeTbmCJGS7RGQ3Y=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "5a88de74db0e948139be4b46f9a94d64aa11391c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "oh-my-tmux": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771712748,
+        "narHash": "sha256-nXm664l84YSwZeRM4Hsweqgz+OlpyfwXcgEdyNGhaGA=",
+        "owner": "gpakosz",
+        "repo": ".tmux",
+        "rev": "af33f07134b76134acca9d01eacbdecca9c9cda6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gpakosz",
+        "repo": ".tmux",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "home-manager": "home-manager",
+        "kanata-config": "kanata-config",
+        "lazyvim-config": "lazyvim-config",
+        "nixos-hardware": "nixos-hardware",
+        "nixpkgs": "nixpkgs",
+        "oh-my-tmux": "oh-my-tmux",
+        "tmux-config": "tmux-config",
+        "zsh-config": "zsh-config"
+      }
+    },
+    "tmux-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1752750731,
+        "narHash": "sha256-CCrt4Cw9I8vPhbWY2u1jvCD/HryiQHrPBjDURCSJ0ao=",
+        "owner": "TZProgrammer",
+        "repo": ".tmux",
+        "rev": "6e01714832c38d0ba352f0af252750e40f53b206",
+        "type": "github"
+      },
+      "original": {
+        "owner": "TZProgrammer",
+        "repo": ".tmux",
+        "type": "github"
+      }
+    },
+    "zsh-config": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1770957404,
+        "narHash": "sha256-KCjlrTEGgFvyWXwGCU4alt/w7v4aVdbvrY7522YAbm8=",
+        "owner": "TZProgrammer",
+        "repo": "zshrc",
+        "rev": "ffd758cf737551ab94b475b32d5de0af75e3c2fe",
+        "type": "github"
+      },
+      "original": {
+        "owner": "TZProgrammer",
+        "repo": "zshrc",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
