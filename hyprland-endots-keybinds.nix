@@ -74,22 +74,46 @@
     bindm = SUPER, mouse:273, resizewindow
 
     # ===========================================================================
-    # Workspace rules
+    # Workspace rules (v3 syntax)
     # ===========================================================================
-    windowrulev2 = workspace 1, class:^(com\.mitchellh\.ghostty)$
-    windowrulev2 = workspace 2, class:^(firefox)$
-    windowrulev2 = workspace 3, class:^([Ss]tremio)$
-    windowrulev2 = workspace 4, class:^(vesktop)$
-    windowrulev2 = workspace 5, class:^(steam)$
-    windowrulev2 = workspace 7, class:^([Ss]potify)$
-    windowrulev2 = workspace 10, class:^(obsidian)$
-
-    # Steam pop-ups float
-    windowrulev2 = float, class:^(steam)$, title:^(?!Steam$).*
-
-    # Picture-in-picture
-    windowrulev2 = float, title:^([Pp]icture.in.[Pp]icture)$
-    windowrulev2 = pin, title:^([Pp]icture.in.[Pp]icture)$
+    windowrule {
+      match:class = com\.mitchellh\.ghostty
+      workspace = 1
+    }
+    windowrule {
+      match:class = firefox
+      workspace = 2
+    }
+    windowrule {
+      match:class = [Ss]tremio
+      workspace = 3
+    }
+    windowrule {
+      match:class = vesktop
+      workspace = 4
+    }
+    windowrule {
+      match:class = steam
+      workspace = 5
+    }
+    windowrule {
+      match:class = [Ss]potify
+      workspace = 7
+    }
+    windowrule {
+      match:class = obsidian
+      workspace = 10
+    }
+    windowrule {
+      match:class = steam
+      negative:title = ^Steam$
+      float = true
+    }
+    windowrule {
+      match:title = [Pp]icture.in.[Pp]icture
+      float = true
+      pin = true
+    }
 
     # ===========================================================================
     # Autostart (workspace-targeted silent launch)
