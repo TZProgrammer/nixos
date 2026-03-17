@@ -102,9 +102,11 @@ in
     xwayland.enable = true;
   };
 
-  services.displayManager.plasma-login-manager.enable = true;
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+  };
   services.displayManager.defaultSession = "hyprland";
-  users.users.plasmalogin.extraGroups = [ "video" "render" ];
 
   services.geoclue2.enable = true;
 
