@@ -117,7 +117,7 @@
     windowrule {
       name = float_steam_popups
       match:class = steam
-      negative:title = ^Steam$
+      match:title = ^(?!Steam$).*
       float = true
     }
     windowrule {
