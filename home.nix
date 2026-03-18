@@ -18,14 +18,6 @@ in
   # Enable end-4's illogical-impulse desktop
   programs.illogical-impulse = {
     enable = true;
-    # Uncomment to enable optional features:
-    # fish.enable = true;
-    # kitty.enable = false; # we use ghostty
-    # starship.enable = true;
-    hyprlandPlugins = {
-      # hyprbars.enable = true;
-      # hyprexpo.enable = true;
-    };
   };
 
   home.username = "zegertho";
