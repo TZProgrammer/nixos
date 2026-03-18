@@ -80,39 +80,48 @@
     # Workspace rules (v3 syntax)
     # ===========================================================================
     windowrule {
+      name = ws_ghostty
       match:class = com\.mitchellh\.ghostty
       workspace = 1
     }
     windowrule {
+      name = ws_firefox
       match:class = firefox
       workspace = 2
     }
     windowrule {
+      name = ws_stremio
       match:class = [Ss]tremio
       workspace = 3
     }
     windowrule {
+      name = ws_vesktop
       match:class = vesktop
       workspace = 4
     }
     windowrule {
+      name = ws_steam
       match:class = steam
       workspace = 5
     }
     windowrule {
+      name = ws_spotify
       match:class = [Ss]potify
       workspace = 7
     }
     windowrule {
+      name = ws_obsidian
       match:class = obsidian
       workspace = 10
     }
     windowrule {
+      name = float_steam_popups
       match:class = steam
       negative:title = ^Steam$
       float = true
     }
     windowrule {
+      name = pip
       match:title = [Pp]icture.in.[Pp]icture
       float = true
       pin = true
