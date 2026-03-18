@@ -251,18 +251,16 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
-  # Fix: illogical-flake's kde-material-you-colors package is missing python-magic
-  # as a declared dependency, causing the runtime deps check to fail.
+  # Fix: kde-material-you-colors is missing python-magic as a declared runtime dep.
+  # Override only the package itself — replacing python3 wholesale causes a
+  # version conflict in the home-manager closure.
   nixpkgs.overlays = [
-    (final: prev: {
-      python3 = prev.python3.override {
-        packageOverrides = _pyfinal: pyprev: {
-          kde-material-you-colors = pyprev.kde-material-you-colors.overridePythonAttrs (old: {
-            propagatedBuildInputs = (old.propagatedBuildInputs or []) ++ [ pyprev.python-magic ];
-          });
-        };
+    (_final: prev: {
+      python3Packages = prev.python3Packages // {
+        kde-material-you-colors = prev.python3Packages.kde-material-you-colors.overridePythonAttrs (old: {
+          propagatedBuildInputs = (old.propagatedBuildInputs or []) ++ [ prev.python3Packages.python-magic ];
+        });
       };
-      python3Packages = final.python3.pkgs;
     })
   ];
 
