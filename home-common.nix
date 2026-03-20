@@ -123,7 +123,7 @@ in
   # 6. Tmux
   programs.tmux = {
     enable = true;
-    plugins = with pkgs.tmuxPlugins; [ sessionx ];
+    plugins = with pkgs.tmuxPlugins; [ tmux-sessionx ];
   };
   home.file.".tmux.conf".source = "${inputs.oh-my-tmux}/.tmux.conf";
   home.file.".tmux.conf.local".source = "${inputs.tmux-config}/tmux.conf.local";
