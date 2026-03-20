@@ -51,6 +51,7 @@ in
 
     # --- GUI / Terminal ---
     # ghostty is managed via programs.ghostty below
+    # kitty is managed via programs.kitty below
 
     # --- AI ---
     claude-code
@@ -206,7 +207,13 @@ in
     defaultCommand = "fd --type f";
   };
 
-  # 9. Ghostty
+  # 9. Kitty (declared here so it's portable; config overridden in hyprland-endots-keybinds.nix)
+  programs.kitty = {
+    enable = true;
+    shellIntegration.enableZshIntegration = true;
+  };
+
+  # 10. Ghostty
   programs.ghostty = {
     enable = true;
     settings = {
@@ -247,12 +254,12 @@ in
     };
   };
 
-  # 10. Firefox
+  # 11. Firefox
   programs.firefox = {
     enable = true;
   };
 
-  # 10. Git
+  # 12. Git
   programs.git = {
     enable = true;
     settings = {
