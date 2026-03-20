@@ -33,6 +33,50 @@ in
 
 {
   # ---------------------------------------------------------------------------
+  # Kitty: override shell to zsh (illogical-impulse defaults to fish)
+  # ---------------------------------------------------------------------------
+  xdg.configFile."kitty/kitty.conf" = lib.mkForce {
+    text = ''
+      # Font
+      font_family      JetBrains Mono Nerd Font
+      font_size 11.0
+
+      # Cursor
+      cursor_shape beam
+      cursor_trail 1
+
+      # Padding (why weird value? consistency with foot)
+      window_margin_width 21.75
+
+      # No stupid close confirmation
+      confirm_os_window_close 0
+
+      # Use zsh shell
+      shell zsh
+
+      # Copy
+      map ctrl+c    copy_or_interrupt
+
+      # Search
+      map ctrl+f   launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id
+      map kitty_mod+f   launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id
+
+      # Scroll & Zoom
+      map page_up    scroll_page_up
+      map page_down    scroll_page_down
+
+      map ctrl+plus  change_font_size all +1
+      map ctrl+equal  change_font_size all +1
+      map ctrl+kp_add  change_font_size all +1
+      map ctrl+minus       change_font_size all -1
+      map ctrl+underscore       change_font_size all -1
+      map ctrl+kp_subtract       change_font_size all -1
+      map ctrl+0 change_font_size all 0
+      map ctrl+kp_0 change_font_size all 0
+    '';
+  };
+
+  # ---------------------------------------------------------------------------
   # Disable idle locking: override hypridle.conf with no listeners
   # ---------------------------------------------------------------------------
   xdg.configFile."hypr/hypridle.conf" = lib.mkForce {
@@ -52,7 +96,7 @@ in
       exec-once = wl-gammarelay-rs
 
       # Workspace-targeted silent launch
-      exec-once = [workspace 1] ghostty
+      exec-once = [workspace 1] kitty
       exec-once = [workspace 2 silent] firefox
       exec-once = [workspace 4 silent] vesktop
       exec-once = [workspace 5 silent] steam
@@ -93,7 +137,7 @@ in
 
       # --- App launcher & terminal ---
       bind = SUPER, SPACE, exec, fuzzel
-      bind = SUPER, Return, exec, ghostty
+      bind = SUPER, Return, exec, kitty
 
       # --- Close window ---
       bind = SUPER, Q, killactive
@@ -152,7 +196,7 @@ in
   # ---------------------------------------------------------------------------
   xdg.configFile."hypr/custom/rules.conf" = lib.mkForce {
     text = ''
-      windowrule = match:class ^com\.mitchellh\.ghostty$, workspace 1
+      windowrule = match:class ^kitty$, workspace 1
       windowrule = match:class ^firefox$,               workspace 2
       windowrule = match:class ^[Ss]tremio$,            workspace 3
       windowrule = match:class ^vesktop$,               workspace 4
