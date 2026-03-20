@@ -5,6 +5,9 @@
 # add our own and override where needed via extraConfig.
 {
   wayland.windowManager.hyprland.extraConfig = ''
+    # Override end-4's terminal variable so his SUPER+Return bind uses ghostty
+    $terminal = ghostty
+
     # ===========================================================================
     # Custom keybindings (appended on top of illogical-impulse defaults)
     # ===========================================================================
