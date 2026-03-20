@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
   # Pre-compiled treesitter parsers via Nix (NixOS can't run dynamically
@@ -18,6 +18,14 @@ in
   # Enable end-4's illogical-impulse desktop
   programs.illogical-impulse = {
     enable = true;
+  };
+
+  # Patch obsolete hyprexpo options that illogical-flake missed
+  xdg.configFile."hypr/hyprland/general.conf" = lib.mkForce {
+    text = builtins.replaceStrings
+      [ "enable_gesture = false" "gesture_positive = false" "gesture_distance = 300" ]
+      [ "# enable_gesture = false" "# gesture_positive = false" "# gesture_distance = 300" ]
+      (builtins.readFile "${inputs.illogical-flake.inputs.dotfiles}/dots/.config/hypr/hyprland/general.conf");
   };
 
   home.username = "zegertho";
