@@ -135,8 +135,8 @@
     # ===========================================================================
     # Autostart (workspace-targeted silent launch)
     # ===========================================================================
-    exec-once = ghostty
-    exec-once = firefox
+    exec-once = [workspace 1] ghostty
+    exec-once = [workspace 2 silent] firefox
     exec-once = [workspace 4 silent] vesktop
     exec-once = [workspace 5 silent] steam
     exec-once = [workspace 7 silent] spotify
