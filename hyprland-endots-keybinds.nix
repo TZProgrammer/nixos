@@ -3,6 +3,33 @@
 # This file appends custom keybindings and window rules on top of end-4's
 # illogical-impulse dotfiles. end-4's binds use SUPER+key patterns; we
 # add our own and override where needed via extraConfig.
+
+let
+  ext-brightness = pkgs.writeShellScriptBin "ext-brightness" ''
+    DBUS_SERVICE="rs.wl-gammarelay"
+    DBUS_PATH="/outputs/DP_1"
+    DBUS_IFACE="rs.wl-gammarelay.output"
+
+    get_val() {
+      busctl --user get-property "$DBUS_SERVICE" "$DBUS_PATH" "$DBUS_IFACE" Brightness \
+        2>/dev/null | awk '{print $2}'
+    }
+
+    case "$1" in
+      up)
+        val=$(get_val); val=''${val:-1.0}
+        new=$(awk "BEGIN {v=$val+0.05; if(v>1.0) v=1.0; printf \"%.2f\", v}")
+        busctl --user set-property "$DBUS_SERVICE" "$DBUS_PATH" "$DBUS_IFACE" Brightness d "$new"
+        ;;
+      down)
+        val=$(get_val); val=''${val:-1.0}
+        new=$(awk "BEGIN {v=$val-0.05; if(v<0.1) v=0.1; printf \"%.2f\", v}")
+        busctl --user set-property "$DBUS_SERVICE" "$DBUS_PATH" "$DBUS_IFACE" Brightness d "$new"
+        ;;
+    esac
+  '';
+in
+
 {
   wayland.windowManager.hyprland.extraConfig = ''
     # Override end-4's terminal variable so his SUPER+Return bind uses ghostty
@@ -50,6 +77,15 @@
 
     # --- Lock screen ---
     bind = SUPER CTRL, l, exec, hyprlock
+
+    # --- Brightness ---
+    bindel = , XF86MonBrightnessUp,   exec, brightnessctl set 5%+
+    bindel = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
+    bind = SUPER, F6, exec, ext-brightness up
+    bind = SUPER, F5, exec, ext-brightness down
+
+    # --- wl-gammarelay-rs for external monitor gamma dimming ---
+    exec-once = wl-gammarelay-rs
 
     # --- Workspace switching (meta+alt+number) ---
     bind = SUPER ALT, 1, workspace, 1
@@ -143,11 +179,11 @@
     exec-once = [workspace 10 silent] obsidian
   '';
 
-  # Screenshot tools (grim/slurp/wl-copy may already be in illogical-flake
-  # packages but added here to be safe)
-  home.packages = with pkgs; [
+  home.packages = (with pkgs; [
     grim
     slurp
     wl-clipboard
-  ];
+    brightnessctl
+    wl-gammarelay-rs
+  ]) ++ [ ext-brightness ];
 }
