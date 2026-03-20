@@ -167,7 +167,7 @@ in
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" "sudo" "docker" "kubectl" ];
-      theme = "robbyrussell";
+      theme = ""; # disabled — starship handles the prompt
     };
   };
 
@@ -216,6 +216,31 @@ in
       window-padding-x = 22;
       window-padding-y = 22;
       confirm-close-surface = false;
+
+      # kitty default color scheme
+      background = "000000";
+      foreground = "dddddd";
+      cursor-color = "cccccc";
+      selection-background = "555555";
+      selection-foreground = "ffffff";
+      palette = [
+        "0=#000000"
+        "1=#cc0403"
+        "2=#19cb00"
+        "3=#cecb00"
+        "4=#0d73cc"
+        "5=#cb1ed1"
+        "6=#0dcdcd"
+        "7=#dddddd"
+        "8=#767676"
+        "9=#f2201f"
+        "10=#23fd00"
+        "11=#fffd00"
+        "12=#1a8fff"
+        "13=#fd28ff"
+        "14=#14ffff"
+        "15=#ffffff"
+      ];
     };
   };
 
