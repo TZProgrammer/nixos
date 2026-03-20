@@ -33,6 +33,17 @@ in
 
 {
   # ---------------------------------------------------------------------------
+  # Disable idle locking: override hypridle.conf with no listeners
+  # ---------------------------------------------------------------------------
+  xdg.configFile."hypr/hypridle.conf" = lib.mkForce {
+    text = ''
+      general {
+        inhibit_sleep = 3
+      }
+    '';
+  };
+
+  # ---------------------------------------------------------------------------
   # Autostart (custom/execs.conf)
   # ---------------------------------------------------------------------------
   xdg.configFile."hypr/custom/execs.conf" = lib.mkForce {
