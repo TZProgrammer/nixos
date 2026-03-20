@@ -24,9 +24,9 @@
     bind = SUPER SHIFT, k, movewindow, u
     bind = SUPER SHIFT, j, movewindow, d
 
-    # --- Monitor focus / move window to monitor ---
+    # --- Monitor focus / move workspace to monitor ---
     bind = SUPER, TAB, focusmonitor, +1
-    bind = SUPER SHIFT, TAB, movewindow, mon:+1
+    bind = SUPER SHIFT, TAB, movecurrentworkspacetomonitor, +1
 
     # --- App launcher & terminal ---
     bind = SUPER, SPACE, exec, fuzzel
@@ -78,6 +78,8 @@
     # --- Mouse binds ---
     bindm = SUPER, mouse:272, movewindow
     bindm = SUPER, mouse:273, resizewindow
+    bind = SUPER, mouse_down, workspace, e+1
+    bind = SUPER, mouse_up, workspace, e-1
 
     # ===========================================================================
     # Workspace rules (v3 syntax)
