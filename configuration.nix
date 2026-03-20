@@ -78,6 +78,23 @@ in
   networking.networkmanager.enable = true;
   networking.firewall.trustedInterfaces = [ "wlo1" ];
 
+  # ProtonVPN via WireGuard
+  # Before rebuilding: save your private key to /etc/wireguard/protonvpn.key (chmod 600)
+  # Download the .conf from: https://account.proton.me/vpn/wireguard
+  networking.wg-quick.interfaces.protonvpn = {
+    address = [ "10.2.0.2/32" "2a07:b944::2:2/128" ];
+    dns = [ "10.2.0.1" "2a07:b944::2:1" ];
+    privateKeyFile = "/etc/wireguard/protonvpn.key";
+    peers = [
+      {
+        publicKey = "bXjH25gkRdWvXKahKY4iJNE+v/TVdT0uXE6WQJrX51Q=";
+        allowedIPs = [ "0.0.0.0/0" "::/0" ];
+        endpoint = "169.150.204.44:51820";
+        persistentKeepalive = 25;
+      }
+    ];
+  };
+
   # Set your time zone.
   time.timeZone = "America/Toronto";
 
