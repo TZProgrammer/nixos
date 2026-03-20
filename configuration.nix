@@ -223,7 +223,7 @@ in
     isNormalUser = true;
     shell = pkgs.zsh;
     description = "Thomas Zeger";
-    extraGroups = [ "networkmanager" "wheel" "input" ];
+    extraGroups = [ "networkmanager" "wheel" "input" "i2c" "video" ];
     packages = with pkgs; [];
   };
 
@@ -248,6 +248,8 @@ in
     enable = true;
     keyboards.internal.configFile = "${inputs.kanata-config}/kanata.kbd";
   };
+
+  hardware.i2c.enable = true; # Required for ddcutil (external monitor brightness via DDC/CI)
 
   nixpkgs.config.allowUnfree = true;
 
