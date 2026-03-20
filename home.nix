@@ -216,8 +216,9 @@ in
       window-padding-x = 22;
       window-padding-y = 22;
       confirm-close-surface = false;
-      font-thicken = true;
-      freetype-load-flags = "force-autohint";
+      font-style = "Medium";
+      freetype-load-flags = "hinting,autohint,light";
+      alpha-blending = "linear-corrected";
 
       # kitty default color scheme
       background = "000000";
