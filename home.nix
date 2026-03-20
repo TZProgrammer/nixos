@@ -50,7 +50,7 @@ in
     eza         # Better ls
 
     # --- GUI / Terminal ---
-    ghostty     # Terminal
+    # ghostty is managed via programs.ghostty below
 
     # --- AI ---
     claude-code
@@ -206,7 +206,20 @@ in
     defaultCommand = "fd --type f";
   };
 
-  # 9. Firefox
+  # 9. Ghostty
+  programs.ghostty = {
+    enable = true;
+    settings = {
+      font-family = "JetBrainsMono Nerd Font";
+      font-size = 11;
+      cursor-style = "bar";
+      window-padding-x = 22;
+      window-padding-y = 22;
+      confirm-close-surface = false;
+    };
+  };
+
+  # 10. Firefox
   programs.firefox = {
     enable = true;
   };
