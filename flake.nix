@@ -49,6 +49,15 @@
   };
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager, ... }@inputs: {
+
+    # Standalone home-manager config for non-NixOS machines (e.g. work laptop)
+    # Usage: home-manager switch --flake .#zegertho
+    homeConfigurations."zegertho" = home-manager.lib.homeManagerConfiguration {
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      extraSpecialArgs = { inherit inputs; };
+      modules = [ ./home-work.nix ];
+    };
+
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
