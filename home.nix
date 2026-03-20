@@ -216,6 +216,7 @@ in
       window-padding-x = 22;
       window-padding-y = 22;
       confirm-close-surface = false;
+      font-thicken = true;
 
       # kitty default color scheme
       background = "000000";
