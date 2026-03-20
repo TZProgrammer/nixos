@@ -121,7 +121,10 @@ in
   home.file.".oh-my-zsh".source = "${pkgs.oh-my-zsh}/share/oh-my-zsh";
 
   # 6. Tmux
-  programs.tmux.enable = true;
+  programs.tmux = {
+    enable = true;
+    plugins = with pkgs.tmuxPlugins; [ sessionx ];
+  };
   home.file.".tmux.conf".source = "${inputs.oh-my-tmux}/.tmux.conf";
   home.file.".tmux.conf.local".source = "${inputs.tmux-config}/tmux.conf.local";
 
