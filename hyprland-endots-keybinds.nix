@@ -1,8 +1,9 @@
-{ config, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
-# This file appends custom keybindings and window rules on top of end-4's
-# illogical-impulse dotfiles. end-4's binds use SUPER+key patterns; we
-# add our own and override where needed via extraConfig.
+# Injects custom keybindings, window rules, and autostart into the
+# illogical-impulse custom/ overlay files (sourced by hyprland.conf).
+# extraConfig is ignored because illogical-flake owns hyprland.conf via
+# xdg.configFile, bypassing the home-manager Hyprland module entirely.
 
 let
   ext-brightness = pkgs.writeShellScriptBin "ext-brightness" ''
@@ -31,153 +32,128 @@ let
 in
 
 {
-  wayland.windowManager.hyprland.extraConfig = ''
-    # Override end-4's terminal variable so his SUPER+Return bind uses ghostty
-    $terminal = ghostty
+  # ---------------------------------------------------------------------------
+  # Autostart (custom/execs.conf)
+  # ---------------------------------------------------------------------------
+  xdg.configFile."hypr/custom/execs.conf" = lib.mkForce {
+    text = ''
+      # wl-gammarelay-rs for external monitor gamma dimming
+      exec-once = wl-gammarelay-rs
 
-    # ===========================================================================
-    # Custom keybindings (appended on top of illogical-impulse defaults)
-    # ===========================================================================
+      # Workspace-targeted silent launch
+      exec-once = [workspace 1] ghostty
+      exec-once = [workspace 2 silent] firefox
+      exec-once = [workspace 4 silent] vesktop
+      exec-once = [workspace 5 silent] steam
+      exec-once = [workspace 7 silent] spotify
+      exec-once = [workspace 10 silent] obsidian
+    '';
+  };
 
-    # --- Focus movement (meta+hjkl) ---
-    bind = SUPER, h, movefocus, l
-    bind = SUPER, l, movefocus, r
-    bind = SUPER, k, movefocus, u
-    bind = SUPER, j, movefocus, d
+  # ---------------------------------------------------------------------------
+  # Keybindings (custom/keybinds.conf)
+  # ---------------------------------------------------------------------------
+  xdg.configFile."hypr/custom/keybinds.conf" = lib.mkForce {
+    text = ''
+      # --- Unbind end-4 keys that conflict with our binds ---
+      unbind = SUPER, J        # was: toggle bar
+      unbind = SUPER, K        # was: toggle on-screen keyboard
+      unbind = SUPER, L        # was: lock screen
+      unbind = SUPER, Tab      # was: overview toggle
+      unbind = SUPER, Return   # was: launch $TERMINAL
+      unbind = CTRL SUPER, R   # was: restart QuickShell widgets
+      unbind = CTRL SUPER, P   # was: cycle panel family
 
-    # --- Move window in direction (meta+shift+hjkl) ---
-    bind = SUPER SHIFT, h, movewindow, l
-    bind = SUPER SHIFT, l, movewindow, r
-    bind = SUPER SHIFT, k, movewindow, u
-    bind = SUPER SHIFT, j, movewindow, d
+      # --- Focus movement (hjkl) ---
+      bind = SUPER, h, movefocus, l
+      bind = SUPER, l, movefocus, r
+      bind = SUPER, k, movefocus, u
+      bind = SUPER, j, movefocus, d
 
-    # --- Monitor focus / move workspace to monitor ---
-    bind = SUPER, TAB, focusmonitor, +1
-    bind = SUPER SHIFT, TAB, movecurrentworkspacetomonitor, +1
+      # --- Move window in direction ---
+      bind = SUPER SHIFT, h, movewindow, l
+      bind = SUPER SHIFT, l, movewindow, r
+      bind = SUPER SHIFT, k, movewindow, u
+      bind = SUPER SHIFT, j, movewindow, d
 
-    # --- App launcher & terminal ---
-    bind = SUPER, SPACE, exec, fuzzel
-    bind = SUPER, Return, exec, ghostty
+      # --- Monitor focus / move workspace to monitor ---
+      bind = SUPER, TAB, focusmonitor, +1
+      bind = SUPER SHIFT, TAB, movecurrentworkspacetomonitor, +1
 
-    # --- Close window ---
-    bind = SUPER, Q, killactive
+      # --- App launcher & terminal ---
+      bind = SUPER, SPACE, exec, fuzzel
+      bind = SUPER, Return, exec, ghostty
 
-    # --- Reload config ---
-    bind = SUPER CTRL, r, exec, hyprctl reload
+      # --- Close window ---
+      bind = SUPER, Q, killactive
 
-    # --- App shortcuts ---
-    bind = SUPER CTRL, d, exec, vesktop
-    bind = SUPER CTRL, f, exec, firefox
-    bind = SUPER CTRL, g, exec, steam
-    bind = SUPER CTRL, m, exec, stremio-linux-shell
-    bind = SUPER CTRL, s, exec, spotify
+      # --- Reload config / restart widgets ---
+      bind = SUPER CTRL, r, exec, hyprctl reload
+      bind = SUPER CTRL SHIFT, r, exec, killall qs quickshell; qs -c $qsConfig &
 
-    # --- Screenshot ---
-    bind = SUPER CTRL, p, exec, grim -g "$(slurp)" - | wl-copy
+      # --- App shortcuts ---
+      bind = SUPER CTRL, d, exec, vesktop
+      bind = SUPER CTRL, f, exec, firefox
+      bind = SUPER CTRL, g, exec, steam
+      bind = SUPER CTRL, m, exec, stremio-linux-shell
+      bind = SUPER CTRL, s, exec, spotify
 
-    # --- Lock screen ---
-    bind = SUPER CTRL, l, exec, hyprlock
+      # --- Screenshot ---
+      bind = SUPER CTRL, p, exec, grim -g "$(slurp)" - | wl-copy
 
-    # --- Brightness ---
-    bindel = , XF86MonBrightnessUp,   exec, brightnessctl set 5%+
-    bindel = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
-    bind = SUPER, F6, exec, ext-brightness up
-    bind = SUPER, F5, exec, ext-brightness down
+      # --- Lock screen ---
+      bind = SUPER CTRL, l, exec, hyprlock
 
-    # --- wl-gammarelay-rs for external monitor gamma dimming ---
-    exec-once = wl-gammarelay-rs
+      # --- Bar toggle ---
+      bind = SUPER CTRL, j, global, quickshell:barToggle
 
-    # --- Workspace switching (meta+alt+number) ---
-    bind = SUPER ALT, 1, workspace, 1
-    bind = SUPER ALT, 2, workspace, 2
-    bind = SUPER ALT, 3, workspace, 3
-    bind = SUPER ALT, 4, workspace, 4
-    bind = SUPER ALT, 5, workspace, 5
-    bind = SUPER ALT, 6, workspace, 6
-    bind = SUPER ALT, 7, workspace, 7
-    bind = SUPER ALT, 8, workspace, 8
-    bind = SUPER ALT, 9, workspace, 9
-    bind = SUPER ALT, 0, workspace, 10
+      # --- Brightness ---
+      bindel = , XF86MonBrightnessUp,   exec, brightnessctl set 5%+
+      bindel = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
+      bind = SUPER, F6, exec, ${ext-brightness}/bin/ext-brightness up
+      bind = SUPER, F5, exec, ${ext-brightness}/bin/ext-brightness down
 
-    # --- Move window to workspace (meta+alt+shift+number) ---
-    bind = SUPER ALT SHIFT, 1, movetoworkspace, 1
-    bind = SUPER ALT SHIFT, 2, movetoworkspace, 2
-    bind = SUPER ALT SHIFT, 3, movetoworkspace, 3
-    bind = SUPER ALT SHIFT, 4, movetoworkspace, 4
-    bind = SUPER ALT SHIFT, 5, movetoworkspace, 5
-    bind = SUPER ALT SHIFT, 6, movetoworkspace, 6
-    bind = SUPER ALT SHIFT, 7, movetoworkspace, 7
-    bind = SUPER ALT SHIFT, 8, movetoworkspace, 8
-    bind = SUPER ALT SHIFT, 9, movetoworkspace, 9
-    bind = SUPER ALT SHIFT, 0, movetoworkspace, 10
+      # --- Workspace switching (Super+number) ---
+      # end-4 already binds these via workspace_action.sh; no override needed.
 
-    # --- Mouse binds ---
-    bindm = SUPER, mouse:272, movewindow
-    bindm = SUPER, mouse:273, resizewindow
-    bind = SUPER, mouse_down, workspace, e+1
-    bind = SUPER, mouse_up, workspace, e-1
+      # --- Move window to workspace silently (stay on current) ---
+      bind = SUPER SHIFT, 1, movetoworkspacesilent, 1
+      bind = SUPER SHIFT, 2, movetoworkspacesilent, 2
+      bind = SUPER SHIFT, 3, movetoworkspacesilent, 3
+      bind = SUPER SHIFT, 4, movetoworkspacesilent, 4
+      bind = SUPER SHIFT, 5, movetoworkspacesilent, 5
+      bind = SUPER SHIFT, 6, movetoworkspacesilent, 6
+      bind = SUPER SHIFT, 7, movetoworkspacesilent, 7
+      bind = SUPER SHIFT, 8, movetoworkspacesilent, 8
+      bind = SUPER SHIFT, 9, movetoworkspacesilent, 9
+      bind = SUPER SHIFT, 0, movetoworkspacesilent, 10
 
-    # ===========================================================================
-    # Workspace rules (v3 syntax)
-    # ===========================================================================
-    windowrule {
-      name = ws_ghostty
-      match:class = com\.mitchellh\.ghostty
-      workspace = 1
-    }
-    windowrule {
-      name = ws_firefox
-      match:class = firefox
-      workspace = 2
-    }
-    windowrule {
-      name = ws_stremio
-      match:class = [Ss]tremio
-      workspace = 3
-    }
-    windowrule {
-      name = ws_vesktop
-      match:class = vesktop
-      workspace = 4
-    }
-    windowrule {
-      name = ws_steam
-      match:class = steam
-      workspace = 5
-    }
-    windowrule {
-      name = ws_spotify
-      match:class = [Ss]potify
-      workspace = 7
-    }
-    windowrule {
-      name = ws_obsidian
-      match:class = obsidian
-      workspace = 10
-    }
-    windowrule {
-      name = float_steam_popups
-      match:class = steam
-      match:title = ^(?!Steam$).*
-      float = true
-    }
-    windowrule {
-      name = pip
-      match:title = [Pp]icture.in.[Pp]icture
-      float = true
-      pin = true
-    }
+      # --- Mouse ---
+      bindm = SUPER, mouse:272, movewindow
+      bindm = SUPER, mouse:273, resizewindow
+      bind = SUPER, mouse_down, workspace, e+1
+      bind = SUPER, mouse_up, workspace, e-1
+    '';
+  };
 
-    # ===========================================================================
-    # Autostart (workspace-targeted silent launch)
-    # ===========================================================================
-    exec-once = [workspace 1] ghostty
-    exec-once = [workspace 2 silent] firefox
-    exec-once = [workspace 4 silent] vesktop
-    exec-once = [workspace 5 silent] steam
-    exec-once = [workspace 7 silent] spotify
-    exec-once = [workspace 10 silent] obsidian
-  '';
+  # ---------------------------------------------------------------------------
+  # Window rules (custom/rules.conf)
+  # ---------------------------------------------------------------------------
+  xdg.configFile."hypr/custom/rules.conf" = lib.mkForce {
+    text = ''
+      windowrule = match:class ^com\.mitchellh\.ghostty$, workspace 1
+      windowrule = match:class ^firefox$,               workspace 2
+      windowrule = match:class ^[Ss]tremio$,            workspace 3
+      windowrule = match:class ^vesktop$,               workspace 4
+      windowrule = match:class ^steam$,                 workspace 5
+      windowrule = match:class ^[Ss]potify$,            workspace 7
+      windowrule = match:class ^obsidian$,              workspace 10
+
+      windowrule = match:class ^steam$, match:title ^(?!Steam$).*, float on
+      windowrule = match:title ^[Pp]icture.in.[Pp]icture$, float on
+      windowrule = match:title ^[Pp]icture.in.[Pp]icture$, pin on
+    '';
+  };
 
   home.packages = (with pkgs; [
     grim
