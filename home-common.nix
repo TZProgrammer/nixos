@@ -12,6 +12,7 @@ in
   # 1. CLI Tools
   home.packages = with pkgs; [
     # --- System Monitoring & Search ---
+    tmux
     bottom
     fd
     ripgrep
