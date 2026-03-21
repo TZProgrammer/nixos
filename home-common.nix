@@ -121,12 +121,20 @@ in
   home.file.".oh-my-zsh".source = "${pkgs.oh-my-zsh}/share/oh-my-zsh";
 
   # 6. Tmux
-  programs.tmux = {
-    enable = true;
-    plugins = with pkgs.tmuxPlugins; [ tmux-sessionx ];
-  };
-  home.file.".tmux.conf".source = "${inputs.oh-my-tmux}/.tmux.conf";
-  home.file.".tmux.conf.local".source = "${inputs.tmux-config}/tmux.conf.local";
+  # oh-my-tmux lives at the XDG path so tmux 3.1+ always finds it first.
+  # Plugins are appended to .local by Nix — no TPM, no TMUX_PLUGIN_MANAGER_PATH.
+  home.file.".config/tmux/tmux.conf".source = "${inputs.oh-my-tmux}/.tmux.conf";
+  home.file.".config/tmux/tmux.conf.local".text =
+    builtins.readFile "${inputs.tmux-config}/tmux.conf.local" + ''
+
+      # --- Nix-managed plugins (appended by home-manager, no TPM needed) ---
+      run-shell ${pkgs.tmuxPlugins.tmux-sessionx}/share/tmux-plugins/sessionx/sessionx.tmux
+      run-shell ${pkgs.tmuxPlugins.resurrect}/share/tmux-plugins/resurrect/resurrect.tmux
+      run-shell ${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/continuum.tmux
+      set -g @continuum-restore 'on'
+      set -g @sessionx-preview-enabled false
+      set -g mouse on
+    '';
 
   # 7. Atuin
   programs.atuin = {
