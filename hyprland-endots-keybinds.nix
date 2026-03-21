@@ -6,16 +6,6 @@
 # xdg.configFile, bypassing the home-manager Hyprland module entirely.
 
 let
-  # Build a patched kitty config dir: same files as illogical-impulse dotfiles
-  # but with shell changed from fish to zsh, and cursor trail disabled.
-  kittyConfig = pkgs.runCommand "kitty-config-zsh" {} ''
-    cp -r ${inputs.illogical-flake.inputs.dotfiles}/dots/.config/kitty $out
-    chmod -R +w $out
-    sed -i 's/^shell fish$/shell zsh/' $out/kitty.conf
-    sed -i 's/^cursor_trail.*/cursor_trail 0/' $out/kitty.conf
-    sed -i 's/^window_margin_width.*/window_margin_width 0/' $out/kitty.conf
-  '';
-
   ext-brightness = pkgs.writeShellScriptBin "ext-brightness" ''
     DBUS_SERVICE="rs.wl-gammarelay"
     DBUS_PATH="/outputs/DP_1"
@@ -42,13 +32,6 @@ let
 in
 
 {
-  # ---------------------------------------------------------------------------
-  # Kitty: override shell to zsh (illogical-impulse defaults to fish)
-  # ---------------------------------------------------------------------------
-  xdg.configFile."kitty" = lib.mkForce {
-    source = kittyConfig;
-  };
-
   # ---------------------------------------------------------------------------
   # Input: disable mouse acceleration
   # ---------------------------------------------------------------------------
@@ -80,7 +63,7 @@ in
       exec-once = wl-gammarelay-rs
 
       # Workspace-targeted silent launch
-      exec-once = [workspace 1] kitty
+      exec-once = [workspace 1] ghostty
       exec-once = [workspace 2 silent] firefox
       exec-once = [workspace 4 silent] vesktop
       exec-once = [workspace 5 silent] steam
@@ -121,7 +104,7 @@ in
 
       # --- App launcher & terminal ---
       bind = SUPER, SPACE, exec, fuzzel
-      bind = SUPER, Return, exec, kitty
+      bind = SUPER, Return, exec, ghostty
 
       # --- Close window ---
       bind = SUPER, Q, killactive
@@ -180,7 +163,7 @@ in
   # ---------------------------------------------------------------------------
   xdg.configFile."hypr/custom/rules.conf" = lib.mkForce {
     text = ''
-      windowrule = match:class ^kitty$, workspace 1
+      windowrule = match:class ^com\.mitchellh\.ghostty$, workspace 1
       windowrule = match:class ^firefox$,               workspace 2
       windowrule = match:class ^[Ss]tremio$,            workspace 3
       windowrule = match:class ^vesktop$,               workspace 4
