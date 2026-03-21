@@ -13,6 +13,7 @@ let
     chmod -R +w $out
     sed -i 's/^shell fish$/shell zsh/' $out/kitty.conf
     sed -i 's/^cursor_trail.*/cursor_trail 0/' $out/kitty.conf
+    sed -i 's/^window_margin_width.*/window_margin_width 0/' $out/kitty.conf
   '';
 
   ext-brightness = pkgs.writeShellScriptBin "ext-brightness" ''
