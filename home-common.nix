@@ -102,11 +102,20 @@ in
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    initContent = ''
-      export ZSH="${pkgs.oh-my-zsh}/share/oh-my-zsh"
-      source ${inputs.zsh-config}/.zshrc
-      t() { tmux a || tmux; }
-    '';
+    initContent = lib.mkMerge [
+      (lib.mkOrder 1000 ''
+        export ZSH="${pkgs.oh-my-zsh}/share/oh-my-zsh"
+        source ${inputs.zsh-config}/.zshrc
+        t() { tmux a || tmux; }
+      '')
+      (lib.mkOrder 1500 ''
+        # Fix starship/atuin zle-keymap-select infinite recursion in vi mode
+        function zle-keymap-select {
+          zle reset-prompt
+        }
+        zle -N zle-keymap-select
+      '')
+    ];
 
     oh-my-zsh = {
       enable = true;
