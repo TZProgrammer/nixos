@@ -151,7 +151,7 @@ in
     settings.filter_mode_shell_up_arrow = "directory";
     settings.enter_accept = true;
     settings.show_preview = true;
-    settings.keymap_mode = "vim";
+    settings.keymap_mode = "vim-insert";
   };
 
   # 8. FZF
