@@ -7,11 +7,12 @@
 
 let
   # Build a patched kitty config dir: same files as illogical-impulse dotfiles
-  # but with shell changed from fish to zsh.
+  # but with shell changed from fish to zsh, and cursor trail disabled.
   kittyConfig = pkgs.runCommand "kitty-config-zsh" {} ''
     cp -r ${inputs.illogical-flake.inputs.dotfiles}/dots/.config/kitty $out
     chmod -R +w $out
     sed -i 's/^shell fish$/shell zsh/' $out/kitty.conf
+    sed -i 's/^cursor_trail.*/cursor_trail 0/' $out/kitty.conf
   '';
 
   ext-brightness = pkgs.writeShellScriptBin "ext-brightness" ''
@@ -45,6 +46,17 @@ in
   # ---------------------------------------------------------------------------
   xdg.configFile."kitty" = lib.mkForce {
     source = kittyConfig;
+  };
+
+  # ---------------------------------------------------------------------------
+  # Input: disable mouse acceleration
+  # ---------------------------------------------------------------------------
+  xdg.configFile."hypr/custom/general.conf" = lib.mkForce {
+    text = ''
+      input {
+          accel_profile = flat
+      }
+    '';
   };
 
   # ---------------------------------------------------------------------------
