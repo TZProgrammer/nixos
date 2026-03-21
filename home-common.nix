@@ -105,6 +105,7 @@ in
     initContent = ''
       export ZSH="${pkgs.oh-my-zsh}/share/oh-my-zsh"
       source ${inputs.zsh-config}/.zshrc
+      t() { tmux a || tmux; }
     '';
 
     oh-my-zsh = {
@@ -146,6 +147,10 @@ in
     enable = true;
     enableZshIntegration = true;
     settings.search_mode = "fuzzy";
+    settings.filter_mode = "directory";
+    settings.enter_accept = true;
+    settings.show_preview = true;
+    settings.keymap_mode = "vim";
   };
 
   # 8. FZF
