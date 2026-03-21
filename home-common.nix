@@ -105,6 +105,7 @@ in
     initContent = ''
       export ZSH="${pkgs.oh-my-zsh}/share/oh-my-zsh"
       source ${inputs.zsh-config}/.zshrc
+      bindkey -M viins '\e\x7f' backward-kill-word
     '';
 
     oh-my-zsh = {

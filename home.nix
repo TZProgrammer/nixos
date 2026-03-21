@@ -43,6 +43,7 @@
       font-family = "JetBrainsMono Nerd Font";
       font-size = 11;
       cursor-style = "bar";
+      keybind = "ctrl+backspace=text:\\x1b\\x7f";
       window-padding-x = 0;
       window-padding-y = 0;
       confirm-close-surface = false;
