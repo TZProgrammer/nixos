@@ -147,7 +147,8 @@ in
     enable = true;
     enableZshIntegration = true;
     settings.search_mode = "fuzzy";
-    settings.filter_mode = "directory";
+    settings.filter_mode = "global";
+    settings.filter_mode_shell_up_arrow = "directory";
     settings.enter_accept = true;
     settings.show_preview = true;
     settings.keymap_mode = "vim";
