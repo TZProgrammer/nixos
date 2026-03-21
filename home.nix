@@ -43,8 +43,8 @@
       font-family = "JetBrainsMono Nerd Font";
       font-size = 11;
       cursor-style = "bar";
-      window-padding-x = 22;
-      window-padding-y = 22;
+      window-padding-x = 0;
+      window-padding-y = 0;
       confirm-close-surface = false;
       font-style = "Medium";
       freetype-load-flags = "hinting,autohint,light";
