@@ -135,6 +135,10 @@ in
       set -g @continuum-restore 'on'
       set -g @sessionx-preview-enabled false
       set -g mouse on
+
+      # Pass extended key sequences (e.g. ctrl+backspace) through to the shell
+      set -s extended-keys on
+      set -as terminal-features '*:extkeys'
     '';
 
   # 7. Atuin
