@@ -6,6 +6,14 @@
 # xdg.configFile, bypassing the home-manager Hyprland module entirely.
 
 let
+  # Build a patched kitty config dir: same files as illogical-impulse dotfiles
+  # but with shell changed from fish to zsh.
+  kittyConfig = pkgs.runCommand "kitty-config-zsh" {} ''
+    cp -r ${inputs.illogical-flake.inputs.dotfiles}/dots/.config/kitty $out
+    chmod -R +w $out
+    sed -i 's/^shell fish$/shell zsh/' $out/kitty.conf
+  '';
+
   ext-brightness = pkgs.writeShellScriptBin "ext-brightness" ''
     DBUS_SERVICE="rs.wl-gammarelay"
     DBUS_PATH="/outputs/DP_1"
@@ -35,51 +43,8 @@ in
   # ---------------------------------------------------------------------------
   # Kitty: override shell to zsh (illogical-impulse defaults to fish)
   # ---------------------------------------------------------------------------
-  # Force the kitty dir to use recursive=true (individual file symlinks) so
-  # that kitty/kitty.conf below can actually be written inside it.
   xdg.configFile."kitty" = lib.mkForce {
-    source = "${inputs.illogical-flake.inputs.dotfiles}/dots/.config/kitty";
-    recursive = true;
-  };
-  xdg.configFile."kitty/kitty.conf" = lib.mkForce {
-    text = ''
-      # Font
-      font_family      JetBrains Mono Nerd Font
-      font_size 11.0
-
-      # Cursor
-      cursor_shape beam
-      cursor_trail 1
-
-      # Padding (why weird value? consistency with foot)
-      window_margin_width 21.75
-
-      # No stupid close confirmation
-      confirm_os_window_close 0
-
-      # Use zsh shell
-      shell zsh
-
-      # Copy
-      map ctrl+c    copy_or_interrupt
-
-      # Search
-      map ctrl+f   launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id
-      map kitty_mod+f   launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id
-
-      # Scroll & Zoom
-      map page_up    scroll_page_up
-      map page_down    scroll_page_down
-
-      map ctrl+plus  change_font_size all +1
-      map ctrl+equal  change_font_size all +1
-      map ctrl+kp_add  change_font_size all +1
-      map ctrl+minus       change_font_size all -1
-      map ctrl+underscore       change_font_size all -1
-      map ctrl+kp_subtract       change_font_size all -1
-      map ctrl+0 change_font_size all 0
-      map ctrl+kp_0 change_font_size all 0
-    '';
+    source = kittyConfig;
   };
 
   # ---------------------------------------------------------------------------
