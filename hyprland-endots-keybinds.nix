@@ -35,6 +35,12 @@ in
   # ---------------------------------------------------------------------------
   # Kitty: override shell to zsh (illogical-impulse defaults to fish)
   # ---------------------------------------------------------------------------
+  # Force the kitty dir to use recursive=true (individual file symlinks) so
+  # that kitty/kitty.conf below can actually be written inside it.
+  xdg.configFile."kitty" = lib.mkForce {
+    source = "${inputs.illogical-flake.inputs.dotfiles}/dots/.config/kitty";
+    recursive = true;
+  };
   xdg.configFile."kitty/kitty.conf" = lib.mkForce {
     text = ''
       # Font
