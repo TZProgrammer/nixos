@@ -30,6 +30,9 @@
     melonds
     osu-lazer-bin
 
+    # --- Fonts ---
+    nerd-fonts.fira-code
+
     # --- Personal ---
     prismlauncher
     pkgs.stremio-linux-shell
@@ -40,7 +43,7 @@
   programs.ghostty = {
     enable = true;
     settings = {
-      font-family = "JetBrainsMono Nerd Font";
+      font-family = "FiraCode Nerd Font";
       font-size = 11;
       cursor-style = "bar";
       keybind = "ctrl+backspace=text:\\x17";
