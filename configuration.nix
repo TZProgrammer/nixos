@@ -294,6 +294,7 @@ in
     asusctl
     kitty
     google-chrome
+    piper-tts
   ];
 
   programs.nh = {
