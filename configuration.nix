@@ -185,7 +185,7 @@ in
     QT_QPA_PLATFORM = "wayland;xcb";
     GDK_BACKEND = "wayland,x11";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    WLR_NO_HARDWARE_CURSORS = "1"; # Required for NVIDIA
+
   };
 
   # Power profiles daemon for KDE/ROG integration
