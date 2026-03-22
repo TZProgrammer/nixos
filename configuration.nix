@@ -162,6 +162,9 @@ in
   hardware.logitech.wireless.enable = true;
   hardware.logitech.wireless.enableGraphical = true;
 
+  # Piper mouse configuration daemon (button remapping, DPI, LEDs)
+  services.ratbagd.enable = true;
+
   # Keep BT adapter power state always on (prevents HCI-level suspend)
   # Keep Logitech Lightspeed receiver and USB hub power always on
   services.udev.extraRules = ''
