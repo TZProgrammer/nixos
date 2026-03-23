@@ -18,16 +18,16 @@
       (builtins.readFile "${inputs.illogical-flake.inputs.dotfiles}/dots/.config/hypr/hyprland/general.conf");
   };
 
-  home.pointerCursor = {
-    name = "Adwaita";
-    package = pkgs.adwaita-icon-theme;
-    size = 24;
-    gtk.enable = true;
-    hyprcursor.enable = true;
+  # Set cursor theme via env vars (avoids home.file conflict with illogical-flake's Adwaita icons)
+  home.sessionVariables = {
+    XCURSOR_THEME = "Adwaita";
+    XCURSOR_SIZE = "24";
   };
 
-  # Override illogical-flake's Adwaita icon symlink to avoid conflict with pointerCursor
-  home.file.".local/share/icons/Adwaita".source = lib.mkForce "${pkgs.adwaita-icon-theme}/share/icons/Adwaita";
+  gtk.cursorTheme = {
+    name = "Adwaita";
+    size = 24;
+  };
 
   home.username = "zegertho";
   home.homeDirectory = "/home/zegertho";
