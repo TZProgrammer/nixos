@@ -18,6 +18,14 @@
       (builtins.readFile "${inputs.illogical-flake.inputs.dotfiles}/dots/.config/hypr/hyprland/general.conf");
   };
 
+  home.pointerCursor = {
+    name = "Adwaita";
+    package = pkgs.adwaita-icon-theme;
+    size = 24;
+    gtk.enable = true;
+    hyprcursor.enable = true;
+  };
+
   home.username = "zegertho";
   home.homeDirectory = "/home/zegertho";
 
