@@ -26,6 +26,9 @@
     hyprcursor.enable = true;
   };
 
+  # Override illogical-flake's Adwaita icon symlink to avoid conflict with pointerCursor
+  home.file.".local/share/icons/Adwaita".source = lib.mkForce "${pkgs.adwaita-icon-theme}/share/icons/Adwaita";
+
   home.username = "zegertho";
   home.homeDirectory = "/home/zegertho";
 
