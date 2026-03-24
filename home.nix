@@ -105,5 +105,7 @@
   # Symlink Obsidian vault from Arch partition
   home.file."Brain".source = config.lib.file.mkOutOfStoreSymlink "/mnt/arch_home/thomas/Brain";
 
+  gtk.gtk4.theme = null;
+
   home.stateVersion = "25.11";
 }
