@@ -30,6 +30,9 @@ in
     gemini-cli
     starship
 
+    # --- Git/GitHub ---
+    gh
+
     # --- Dev Tools ---
     gcc
     unzip
