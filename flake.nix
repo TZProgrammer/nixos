@@ -42,7 +42,7 @@
 
     # end-4's Hyprland dotfiles via illogical-flake wrapper
     illogical-flake = {
-      url = "github:TZProgrammer/illogical-flake";
+      url = "path:./illogical-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
