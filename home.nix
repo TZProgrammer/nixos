@@ -18,15 +18,12 @@
       (builtins.readFile "${inputs.illogical-flake.inputs.dotfiles}/dots/.config/hypr/hyprland/general.conf");
   };
 
-  # Set cursor theme via env vars (avoids home.file conflict with illogical-flake's Adwaita icons)
-  home.sessionVariables = {
-    XCURSOR_THEME = "Adwaita";
-    XCURSOR_SIZE = "24";
-  };
-
-  gtk.cursorTheme = {
-    name = "Adwaita";
+  home.pointerCursor = {
+    name = "Bibata-Modern-Classic";
+    package = pkgs.bibata-cursors;
     size = 24;
+    gtk.enable = true;
+    hyprcursor.enable = true;
   };
 
   home.username = "zegertho";
