@@ -2,11 +2,11 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running 'nixos-help').
 
-{ config, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
   # --- TOGGLE NVK HERE ---
-  useNVK = false; 
+  useNVK = false;
 in
 {
   imports =
@@ -38,6 +38,7 @@ in
       libvdpau-va-gl     # Translation layer
     ] ++ (pkgs.lib.optional (!useNVK) nvidia-vaapi-driver); # VA-API for proprietary NVIDIA
   };
+
 
   # Kernel Parameters
   boot.kernelParams = [
@@ -278,6 +279,10 @@ in
   # sees the fix. The base interpreter is given lower priority (higher number) so
   # buildEnv resolves any conflict with the python3 env in favour of the env.
   nixpkgs.overlays = [
+    # intel-ocl source URL is dead (Intel 403, Wayback 429) — replace with empty derivation
+    (final: prev: {
+      intel-ocl = prev.emptyDirectory.overrideAttrs { pname = "intel-ocl"; name = "intel-ocl-dummy"; };
+    })
     (final: prev: {
       python3 = (prev.python3.override {
         packageOverrides = _pyfinal: pyprev: {
