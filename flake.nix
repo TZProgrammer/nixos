@@ -62,6 +62,33 @@
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
+        # Overlay: fix stremio-linux-shell substituteInPlace glob failure
+        {
+          nixpkgs.overlays = [
+            (final: prev: {
+              stremio-linux-shell = prev.stremio-linux-shell.overrideAttrs (old: {
+                postPatch = ''
+                  substituteInPlace src/config.rs \
+                    --replace-fail "@serverjs@" "${placeholder "out"}/share/stremio/server.js"
+
+                  for f in $cargoDepsCopy/libappindicator-sys-*/src/lib.rs; do
+                    substituteInPlace "$f" \
+                      --replace-fail "libayatana-appindicator3.so.1" "${prev.libayatana-appindicator}/lib/libayatana-appindicator3.so.1"
+                  done
+                  for f in $cargoDepsCopy/xkbcommon-dl-*/src/lib.rs; do
+                    substituteInPlace "$f" \
+                      --replace-fail "libxkbcommon.so.0" "${prev.libxkbcommon}/lib/libxkbcommon.so.0"
+                  done
+                  for f in $cargoDepsCopy/xkbcommon-dl-*/src/x11.rs; do
+                    substituteInPlace "$f" \
+                      --replace-fail "libxkbcommon-x11.so.0" "${prev.libxkbcommon}/lib/libxkbcommon-x11.so.0"
+                  done
+                '';
+              });
+            })
+          ];
+        }
+
         # Import your hardware scan
         ./hardware-configuration.nix
 
