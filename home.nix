@@ -34,6 +34,7 @@
     nerd-fonts.fira-code
 
     # --- Personal ---
+    discord
     prismlauncher
     pkgs.stremio-linux-shell
     spotify
@@ -86,11 +87,7 @@
     enable = true;
     settings.hardwareAcceleration = false;
     vencord.settings = {
-      plugins = {
-        MessageLogger = { enabled = true; ignoreSelf = true; };
-        VolumeBooster.enabled = true;
-        FakeNitro.enabled = true;
-      };
+      plugins = {};
       notifyAboutUpdates = false;
       autoUpdate = false;
     };
