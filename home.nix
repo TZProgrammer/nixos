@@ -34,7 +34,6 @@
     nerd-fonts.fira-code
 
     # --- Personal ---
-    discord
     prismlauncher
     pkgs.stremio-linux-shell
     spotify
@@ -86,11 +85,6 @@
   programs.vesktop = {
     enable = true;
     settings.hardwareAcceleration = false;
-    vencord.settings = {
-      plugins = {};
-      notifyAboutUpdates = false;
-      autoUpdate = false;
-    };
   };
 
   # Firefox
