@@ -83,7 +83,7 @@ in
   # Before rebuilding: save your private key to /etc/wireguard/protonvpn.key (chmod 600)
   # Download the .conf from: https://account.proton.me/vpn/wireguard
   networking.wg-quick.interfaces.protonvpn = {
-    autoStart = false;
+    autostart = false;
     address = [ "10.2.0.2/32" "2a07:b944::2:2/128" ];
     dns = [ "10.2.0.1" "2a07:b944::2:1" ];
     privateKeyFile = "/etc/wireguard/protonvpn.key";
