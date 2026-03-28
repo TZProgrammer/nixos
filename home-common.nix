@@ -56,6 +56,7 @@ in
     prettier
     markdown-toc
     markdownlint-cli2
+    marksman
     lua51Packages.jsregexp
     nixd
     nixpkgs-fmt

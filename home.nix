@@ -34,6 +34,7 @@
     nerd-fonts.fira-code
 
     # --- Personal ---
+    discord
     prismlauncher
     pkgs.stremio-linux-shell
     spotify
