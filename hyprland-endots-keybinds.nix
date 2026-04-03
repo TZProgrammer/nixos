@@ -174,6 +174,11 @@ in
       windowrule = match:class ^steam$, match:title ^(?!Steam$).*, float on
       windowrule = match:title ^[Pp]icture.in.[Pp]icture$, float on
       windowrule = match:title ^[Pp]icture.in.[Pp]icture$, pin on
+
+      # Tearing for native games not caught by the default rules
+      windowrule = match:class ^osu!$, immediate on
+      windowrule = match:class ^prismlauncher$, immediate on
+      windowrule = match:title ^Celeste$, immediate on
     '';
   };
 
