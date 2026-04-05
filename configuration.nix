@@ -188,6 +188,10 @@ in
     GDK_BACKEND = "wayland,x11";
     _JAVA_AWT_WM_NONREPARENTING = "1";
 
+    # VA-API hardware video acceleration (Intel iGPU)
+    LIBVA_DRIVER_NAME = "iHD";
+    MOZ_DISABLE_RDD_SANDBOX = "1";   # Let Firefox RDD process access VA-API
+    NVD_BACKEND = "direct";          # nvidia-vaapi-driver backend
   };
 
   # Power profiles daemon for KDE/ROG integration
@@ -200,6 +204,13 @@ in
   services.tlp = {
     enable = false;
     settings.USB_AUTOSUSPEND = 0;
+  };
+
+  zramSwap = {
+    enable = true;
+    priority = 100;
+    algorithm = "lz4";
+    memoryPercent = 50;
   };
 
   services.btrfs.autoScrub = {

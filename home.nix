@@ -88,7 +88,19 @@
   };
 
   # Firefox
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+    profiles.default = {
+      settings = {
+        # Hardware video acceleration via VA-API
+        "media.ffmpeg.vaapi.enabled" = true;
+        "media.rdd-ffmpeg.enabled" = true;
+        "gfx.webrender.all" = true;
+        "gfx.canvas.accelerated" = true;
+        "widget.dmabuf.force-enabled" = true;
+      };
+    };
+  };
 
   # Symlink GBA/DS roms from Arch partition
   home.file."roms".source = config.lib.file.mkOutOfStoreSymlink "/mnt/arch_home/thomas/roms";
