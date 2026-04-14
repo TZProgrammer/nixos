@@ -26,7 +26,7 @@ in
     eza
 
     # --- AI ---
-    claude-code
+    # claude-code — removed; 2.1.88 yanked from npm, installed via npm instead
     gemini-cli
     starship
 
@@ -35,6 +35,7 @@ in
 
     # --- Dev Tools ---
     gcc
+    clang-tools
     unzip
     nodejs
     python3
