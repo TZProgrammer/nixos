@@ -6,12 +6,11 @@
     ./modules/home/zsh.nix
     ./modules/home/tmux.nix
     ./modules/home/git.nix
-    ./modules/home/kitty.nix
     ./modules/home/neovim.nix
     ./modules/home/direnv.nix
   ];
 
-  # 1. CLI Tools
+  # 1. CLI Tools (Headless Safe)
   home.packages = with pkgs; [
     # --- System Monitoring & Search ---
     bottom
@@ -20,14 +19,12 @@
     jq
 
     # --- Productivity ---
-    obsidian
     yazi
     tldr
     bat
     eza
 
     # --- AI ---
-    # claude-code — removed; 2.1.88 yanked from npm, installed via npm instead
     gemini-cli
     starship
 
