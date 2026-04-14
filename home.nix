@@ -7,6 +7,8 @@
     ./hyprland-endots-keybinds.nix
   ];
 
+  nixpkgs.config.allowUnfree = true;
+
   # Enable end-4's illogical-impulse desktop
   programs.illogical-impulse.enable = true;
 

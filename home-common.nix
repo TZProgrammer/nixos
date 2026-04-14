@@ -7,6 +7,10 @@ let
   };
 in
 {
+  imports = [
+    ./modules/atuin.nix
+  ];
+
   home.sessionVariables.NIX_TS_PARSERS = "${treesitter-parsers}";
 
   # 1. CLI Tools
@@ -155,18 +159,6 @@ in
       set -s extended-keys on
       set -as terminal-features '*:extkeys'
     '';
-
-  # 7. Atuin
-  programs.atuin = {
-    enable = true;
-    enableZshIntegration = true;
-    settings.search_mode = "fuzzy";
-    settings.filter_mode = "global";
-    settings.filter_mode_shell_up_arrow = "directory";
-    settings.enter_accept = true;
-    settings.show_preview = true;
-    settings.keymap_mode = "vim-insert";
-  };
 
   # 8. FZF
   programs.fzf = {
