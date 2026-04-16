@@ -25,6 +25,7 @@
     eza
 
     # --- AI ---
+    claude-code
     gemini-cli
     starship
 
@@ -34,6 +35,8 @@
     # --- Dev Tools ---
     gcc
     clang-tools
+    shfmt
+    stylua
     unzip
     nodejs
     python3
