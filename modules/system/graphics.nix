@@ -22,7 +22,15 @@ in
     modesetting.enable = true;
     open = false;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.beta;
+    # Shim a `.mod` passthru: the pinned-old nvidia derivation (from nixpkgs-kernel)
+    # predates nixpkgs splitting nvidia_x11 into .bin/.mod sub-outputs, but the new
+    # nixos module reads nvidia_x11.mod. Aliasing it to the package itself works
+    # because the old single-derivation form already contains the kernel module.
+    package =
+      let p = config.boot.kernelPackages.nvidiaPackages.beta;
+      in p.overrideAttrs (old: {
+        passthru = (old.passthru or {}) // { mod = p; };
+      });
     nvidiaPersistenced = true;
     powerManagement.enable = true;
     prime = {
