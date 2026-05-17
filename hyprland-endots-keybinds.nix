@@ -44,11 +44,10 @@ in
           cursor = {
               no_hardware_cursors = 0,
           },
-          monitor = {
-              "eDP-1, preferred, 0x0, 1",
-              "DP-1, preferred, 1920x0, 1",
-          },
       })
+
+      hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x0",    scale = "1" })
+      hl.monitor({ output = "DP-1",  mode = "preferred", position = "1920x0", scale = "1" })
     '';
   };
 
