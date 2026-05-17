@@ -12,6 +12,9 @@
 
   # 1. CLI Tools (Headless Safe)
   home.packages = with pkgs; [
+    # --- Audio ---
+    qpwgraph
+
     # --- System Monitoring & Search ---
     bottom
     fd

@@ -3,6 +3,7 @@
 {
   programs.firefox = {
     enable = true;
+    configPath = ".mozilla/firefox";
     profiles.default = {
       settings = {
         "media.ffmpeg.vaapi.enabled" = true;

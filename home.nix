@@ -10,6 +10,8 @@
 
   # Enable end-4's illogical-impulse desktop
   programs.illogical-impulse.enable = true;
+  # kitty config is managed by modules/home/kitty.nix
+  programs.illogical-impulse.dotfiles.kitty.enable = false;
 
   home.username = "zegertho";
   home.homeDirectory = "/home/zegertho";

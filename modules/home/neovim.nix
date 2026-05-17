@@ -9,14 +9,14 @@ in
 {
   home.sessionVariables.NIX_TS_PARSERS = "${treesitter-parsers}";
 
-  # 4. Neovim
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-    withRuby = false;
-    withPython3 = false;
+  # Neovim package only — config (init.lua) comes from LazyVim via xdg.configFile below.
+  # programs.neovim is intentionally not used because it would write its own init.lua
+  # and conflict with the recursively symlinked LazyVim config.
+  home.packages = [ pkgs.neovim ];
+  home.sessionVariables.EDITOR = "nvim";
+  home.shellAliases = {
+    vi = "nvim";
+    vim = "nvim";
   };
 
   xdg.configFile."nvim" = {

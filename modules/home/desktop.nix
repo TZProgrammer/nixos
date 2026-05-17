@@ -13,6 +13,7 @@
   home.packages = with pkgs; [
     # Productivity
     obsidian
+    kdePackages.dolphin
 
     # Media & Personal
     spotify
@@ -39,4 +40,10 @@
   };
 
   gtk.gtk4.theme = null;
+
+  qt = {
+    enable = true;
+    platformTheme.name = "kde";
+    style.name = lib.mkForce "breeze-dark";
+  };
 }

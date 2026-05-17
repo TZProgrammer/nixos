@@ -46,5 +46,11 @@ in
     LIBVA_DRIVER_NAME = "iHD";
     MOZ_DISABLE_RDD_SANDBOX = "1";   # Let Firefox RDD process access VA-API
     NVD_BACKEND = "direct";          # nvidia-vaapi-driver backend
+
+    # Aquamarine (Hyprland) device order: NVIDIA first so it's the primary
+    # render + scanout device. DP-1 is wired to the dGPU, so this avoids a
+    # cross-GPU copy that caused cursor/window lag on the external monitor.
+    # eDP-1 (Intel) becomes the secondary cross-GPU output.
+    AQ_DRM_DEVICES = "/dev/dri/card0:/dev/dri/card1";
   };
 }

@@ -11,14 +11,16 @@ in
     # Environment variables for Illogical Impulse
     home.sessionVariables = {
       # QT_QPA_PLATFORMTHEME = "qt6ct";  # Use qt6ct for Qt6 theming
-      QT_STYLE_OVERRIDE = "";
+      QT_STYLE_OVERRIDE = lib.mkForce "";
       ILLOGICAL_IMPULSE_DOTFILES_SOURCE = "${config.home.homeDirectory}/.config";
       ILLOGICAL_IMPULSE_VIRTUAL_ENV = "${config.home.homeDirectory}/.local/state/quickshell/.venv";
       qsConfig = "${config.home.homeDirectory}/.config/quickshell/ii";
     };
     
     # Ensure variables are available to systemd services (and Hyprland)
-    systemd.user.sessionVariables = config.home.sessionVariables;
+    systemd.user.sessionVariables = config.home.sessionVariables // {
+      QT_STYLE_OVERRIDE = lib.mkForce "";
+    };
 
     # Install qt6ct for Qt theming
     home.packages = [ pkgs.qt6Packages.qt6ct ];

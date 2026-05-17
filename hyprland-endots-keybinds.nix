@@ -1,9 +1,9 @@
 { config, lib, pkgs, inputs, ... }:
 
 # Injects custom keybindings, window rules, and autostart into the
-# illogical-impulse custom/ overlay files (sourced by hyprland.conf).
-# extraConfig is ignored because illogical-flake owns hyprland.conf via
-# xdg.configFile, bypassing the home-manager Hyprland module entirely.
+# illogical-impulse custom/ overlay files. Upstream migrated to a Lua-based
+# Hyprland config in May 2026 (Hyprland 0.55+), so the overrides below now
+# write Lua instead of the legacy .conf syntax.
 
 let
   ext-brightness = pkgs.writeShellScriptBin "ext-brightness" ''
@@ -33,18 +33,21 @@ in
 
 {
   # ---------------------------------------------------------------------------
-  # Input: disable mouse acceleration
+  # Input: disable mouse acceleration (custom/general.lua)
   # ---------------------------------------------------------------------------
-  xdg.configFile."hypr/custom/general.conf" = lib.mkForce {
+  xdg.configFile."hypr/custom/general.lua" = lib.mkForce {
     text = ''
-      input {
-          accel_profile = flat
-      }
+      hl.config({
+          input = {
+              accel_profile = "flat",
+          },
+      })
     '';
   };
 
   # ---------------------------------------------------------------------------
   # Disable idle locking: override hypridle.conf with no listeners
+  # (hypridle.conf is still a .conf file in upstream.)
   # ---------------------------------------------------------------------------
   xdg.configFile."hypr/hypridle.conf" = lib.mkForce {
     text = ''
@@ -55,130 +58,127 @@ in
   };
 
   # ---------------------------------------------------------------------------
-  # Autostart (custom/execs.conf)
+  # Autostart (custom/execs.lua)
   # ---------------------------------------------------------------------------
-  xdg.configFile."hypr/custom/execs.conf" = lib.mkForce {
+  xdg.configFile."hypr/custom/execs.lua" = lib.mkForce {
     text = ''
-      # wl-gammarelay-rs for external monitor gamma dimming
-      exec-once = wl-gammarelay-rs
+      hl.on("hyprland.start", function()
+          -- wl-gammarelay-rs for external monitor gamma dimming
+          hl.exec_cmd("wl-gammarelay-rs")
 
-      # Workspace-targeted silent launch
-      exec-once = [workspace 1] ghostty
-      exec-once = [workspace 2 silent] firefox
-      exec-once = [workspace 4 silent] vesktop
-      exec-once = [workspace 5 silent] steam
-      exec-once = [workspace 7 silent] spotify
-      exec-once = [workspace 10 silent] obsidian
+          -- Workspace-targeted silent launch
+          hl.exec_cmd("[workspace 1] ghostty")
+          hl.exec_cmd("[workspace 2 silent] firefox")
+          hl.exec_cmd("[workspace 4 silent] vesktop")
+          hl.exec_cmd("[workspace 5 silent] steam")
+          hl.exec_cmd("[workspace 7 silent] spotify")
+          hl.exec_cmd("[workspace 10 silent] obsidian")
+      end)
     '';
   };
 
   # ---------------------------------------------------------------------------
-  # Keybindings (custom/keybinds.conf)
+  # Keybindings (custom/keybinds.lua)
   # ---------------------------------------------------------------------------
-  xdg.configFile."hypr/custom/keybinds.conf" = lib.mkForce {
+  xdg.configFile."hypr/custom/keybinds.lua" = lib.mkForce {
     text = ''
-      # --- Unbind end-4 keys that conflict with our binds ---
-      unbind = SUPER, J        # was: toggle bar
-      unbind = SUPER, K        # was: toggle on-screen keyboard
-      unbind = SUPER, L        # was: lock screen
-      unbind = SUPER, Tab      # was: overview toggle
-      unbind = SUPER, Return   # was: launch $TERMINAL
-      unbind = CTRL SUPER, R   # was: restart QuickShell widgets
-      unbind = CTRL SUPER, P   # was: cycle panel family
+      -- --- Unbind end-4 keys that conflict with our binds ---
+      hl.unbind("SUPER + J")        -- was: toggle bar
+      hl.unbind("SUPER + K")        -- was: toggle on-screen keyboard
+      hl.unbind("SUPER + L")        -- was: lock screen
+      hl.unbind("SUPER + Tab")      -- was: overview toggle
+      hl.unbind("SUPER + Return")   -- was: launch $TERMINAL
+      hl.unbind("CTRL + SUPER + R") -- was: restart QuickShell widgets
+      hl.unbind("CTRL + SUPER + P") -- was: cycle panel family
 
-      # --- Focus movement (hjkl) ---
-      bind = SUPER, h, movefocus, l
-      bind = SUPER, l, movefocus, r
-      bind = SUPER, k, movefocus, u
-      bind = SUPER, j, movefocus, d
+      -- --- Focus movement (hjkl) ---
+      hl.bind("SUPER + h", hl.dsp.focus({ direction = "left"  }))
+      hl.bind("SUPER + l", hl.dsp.focus({ direction = "right" }))
+      hl.bind("SUPER + k", hl.dsp.focus({ direction = "up"    }))
+      hl.bind("SUPER + j", hl.dsp.focus({ direction = "down"  }))
 
-      # --- Move window in direction ---
-      bind = SUPER SHIFT, h, movewindow, l
-      bind = SUPER SHIFT, l, movewindow, r
-      bind = SUPER SHIFT, k, movewindow, u
-      bind = SUPER SHIFT, j, movewindow, d
+      -- --- Move window in direction ---
+      hl.bind("SUPER + SHIFT + h", hl.dsp.window.move({ direction = "left"  }))
+      hl.bind("SUPER + SHIFT + l", hl.dsp.window.move({ direction = "right" }))
+      hl.bind("SUPER + SHIFT + k", hl.dsp.window.move({ direction = "up"    }))
+      hl.bind("SUPER + SHIFT + j", hl.dsp.window.move({ direction = "down"  }))
 
-      # --- Monitor focus / move workspace to monitor ---
-      bind = SUPER, TAB, focusmonitor, +1
-      bind = SUPER SHIFT, TAB, movecurrentworkspacetomonitor, +1
+      -- --- Monitor focus / move workspace to monitor ---
+      hl.bind("SUPER + Tab",         hl.dsp.focus({ monitor = "+1" }))
+      hl.bind("SUPER + SHIFT + Tab", hl.dsp.workspace.move({ monitor = "+1" }))
 
-      # --- App launcher & terminal ---
-      bind = SUPER, SPACE, exec, fuzzel
-      bind = SUPER, Return, exec, ghostty
+      -- --- App launcher & terminal ---
+      hl.bind("SUPER + SPACE",  hl.dsp.exec_cmd("fuzzel"))
+      hl.bind("SUPER + Return", hl.dsp.exec_cmd("ghostty"))
 
-      # --- Close window ---
-      bind = SUPER, Q, killactive
+      -- --- Close window ---
+      hl.bind("SUPER + Q", hl.dsp.window.close())
 
-      # --- Reload config / restart widgets ---
-      bind = SUPER CTRL, r, exec, hyprctl reload
-      bind = SUPER CTRL SHIFT, r, exec, killall qs quickshell; qs -c $qsConfig &
+      -- --- Reload config / restart widgets ---
+      hl.bind("SUPER + CTRL + R",         hl.dsp.exec_cmd("hyprctl reload"))
+      hl.bind("SUPER + CTRL + SHIFT + R", hl.dsp.exec_cmd("killall qs quickshell; qs -c $qsConfig &"))
 
-      # --- App shortcuts ---
-      bind = SUPER CTRL, d, exec, vesktop
-      bind = SUPER CTRL, f, exec, firefox
-      bind = SUPER CTRL, g, exec, steam
-      bind = SUPER CTRL, m, exec, stremio-linux-shell
-      bind = SUPER CTRL, s, exec, spotify
+      -- --- App shortcuts ---
+      hl.bind("SUPER + CTRL + D", hl.dsp.exec_cmd("vesktop"))
+      hl.bind("SUPER + CTRL + F", hl.dsp.exec_cmd("firefox"))
+      hl.bind("SUPER + CTRL + G", hl.dsp.exec_cmd("steam"))
+      hl.bind("SUPER + CTRL + M", hl.dsp.exec_cmd("stremio-linux-shell"))
+      hl.bind("SUPER + CTRL + S", hl.dsp.exec_cmd("spotify"))
 
-      # --- Screenshot ---
-      bind = SUPER CTRL, p, exec, grim -g "$(slurp)" - | wl-copy
+      -- --- Screenshot ---
+      hl.bind("SUPER + CTRL + P", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
 
-      # --- Lock screen ---
-      bind = SUPER CTRL, l, exec, hyprlock
+      -- --- Lock screen ---
+      hl.bind("SUPER + CTRL + L", hl.dsp.exec_cmd("hyprlock"))
 
-      # --- Bar toggle ---
-      bind = SUPER CTRL, j, global, quickshell:barToggle
+      -- --- Bar toggle ---
+      hl.bind("SUPER + CTRL + J", hl.dsp.global("quickshell:barToggle"))
 
-      # --- Brightness ---
-      bindel = , XF86MonBrightnessUp,   exec, brightnessctl set 5%+
-      bindel = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
-      bind = SUPER, F6, exec, ${ext-brightness}/bin/ext-brightness up
-      bind = SUPER, F5, exec, ${ext-brightness}/bin/ext-brightness down
+      -- --- Brightness ---
+      hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set 5%+"), { repeating = true, locked = true })
+      hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { repeating = true, locked = true })
+      hl.bind("SUPER + F6", hl.dsp.exec_cmd("${ext-brightness}/bin/ext-brightness up"))
+      hl.bind("SUPER + F5", hl.dsp.exec_cmd("${ext-brightness}/bin/ext-brightness down"))
 
-      # --- Workspace switching (Super+number) ---
-      # end-4 already binds these via workspace_action.sh; no override needed.
+      -- --- Workspace switching (Super+number) ---
+      -- end-4 already binds these; no override needed.
 
-      # --- Move window to workspace silently (stay on current) ---
-      bind = SUPER SHIFT, 1, movetoworkspacesilent, 1
-      bind = SUPER SHIFT, 2, movetoworkspacesilent, 2
-      bind = SUPER SHIFT, 3, movetoworkspacesilent, 3
-      bind = SUPER SHIFT, 4, movetoworkspacesilent, 4
-      bind = SUPER SHIFT, 5, movetoworkspacesilent, 5
-      bind = SUPER SHIFT, 6, movetoworkspacesilent, 6
-      bind = SUPER SHIFT, 7, movetoworkspacesilent, 7
-      bind = SUPER SHIFT, 8, movetoworkspacesilent, 8
-      bind = SUPER SHIFT, 9, movetoworkspacesilent, 9
-      bind = SUPER SHIFT, 0, movetoworkspacesilent, 10
+      -- --- Move window to workspace silently (stay on current) ---
+      for i = 1, 10 do
+          local key = (i == 10) and "0" or tostring(i)
+          local ws  = tostring(i)
+          hl.bind("SUPER + SHIFT + " .. key, hl.dsp.window.move({ workspace = ws, follow = false }))
+      end
 
-      # --- Mouse ---
-      bindm = SUPER, mouse:272, movewindow
-      bindm = SUPER, mouse:273, resizewindow
-      bind = SUPER, mouse_down, workspace, e+1
-      bind = SUPER, mouse_up, workspace, e-1
+      -- --- Mouse ---
+      hl.bind("SUPER + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+      hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true })
+      hl.bind("SUPER + mouse_down", hl.dsp.focus({ workspace = "+1" }))
+      hl.bind("SUPER + mouse_up",   hl.dsp.focus({ workspace = "-1" }))
     '';
   };
 
   # ---------------------------------------------------------------------------
-  # Window rules (custom/rules.conf)
+  # Window rules (custom/rules.lua)
   # ---------------------------------------------------------------------------
-  xdg.configFile."hypr/custom/rules.conf" = lib.mkForce {
+  xdg.configFile."hypr/custom/rules.lua" = lib.mkForce {
     text = ''
-      windowrule = match:class ^com\.mitchellh\.ghostty$, workspace 1
-      windowrule = match:class ^firefox$,               workspace 2
-      windowrule = match:class ^[Ss]tremio$,            workspace 3
-      windowrule = match:class ^vesktop$,               workspace 4
-      windowrule = match:class ^steam$,                 workspace 5
-      windowrule = match:class ^[Ss]potify$,            workspace 7
-      windowrule = match:class ^obsidian$,              workspace 10
+      hl.window_rule({ match = { class = "^com\\.mitchellh\\.ghostty$" }, workspace = "1"  })
+      hl.window_rule({ match = { class = "^firefox$"                  }, workspace = "2"  })
+      hl.window_rule({ match = { class = "^[Ss]tremio$"               }, workspace = "3"  })
+      hl.window_rule({ match = { class = "^vesktop$"                  }, workspace = "4"  })
+      hl.window_rule({ match = { class = "^steam$"                    }, workspace = "5"  })
+      hl.window_rule({ match = { class = "^[Ss]potify$"               }, workspace = "7"  })
+      hl.window_rule({ match = { class = "^obsidian$"                 }, workspace = "10" })
 
-      windowrule = match:class ^steam$, match:title ^(?!Steam$).*, float on
-      windowrule = match:title ^[Pp]icture.in.[Pp]icture$, float on
-      windowrule = match:title ^[Pp]icture.in.[Pp]icture$, pin on
+      hl.window_rule({ match = { class = "^steam$",  title = "^(?!Steam$).*" },           float = true })
+      hl.window_rule({ match = { title = "^[Pp]icture.in.[Pp]icture$"        },           float = true })
+      hl.window_rule({ match = { title = "^[Pp]icture.in.[Pp]icture$"        },           pin   = true })
 
-      # Tearing for native games not caught by the default rules
-      windowrule = match:class ^osu!$, immediate on
-      windowrule = match:class ^prismlauncher$, immediate on
-      windowrule = match:title ^Celeste$, immediate on
+      -- Tearing for native games not caught by the default rules
+      hl.window_rule({ match = { class = "^osu!$"         }, immediate = true })
+      hl.window_rule({ match = { class = "^prismlauncher$" }, immediate = true })
+      hl.window_rule({ match = { title = "^Celeste$"       }, immediate = true })
     '';
   };
 
