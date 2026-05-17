@@ -41,6 +41,13 @@ in
           input = {
               accel_profile = "flat",
           },
+          cursor = {
+              no_hardware_cursors = 0,
+          },
+          monitor = {
+              "eDP-1, preferred, 0x0, 1",
+              "DP-1, preferred, 1920x0, 1",
+          },
       })
     '';
   };
