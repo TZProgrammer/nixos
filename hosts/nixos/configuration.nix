@@ -109,6 +109,7 @@
   hardware.enableAllFirmware = true;
 
   programs.zsh.enable = true;
+  programs.dconf.enable = true;
 
   users.users.zegertho = {
     isNormalUser = true;
