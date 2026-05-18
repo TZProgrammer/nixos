@@ -52,6 +52,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Lossless Scaling Frame Generation (Vulkan layer + Qt6 UI + CLI), v2.0.0-dev
+    lsfg-vk = {
+      url = "github:Daaboulex/lsfg-vk-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager, ... }@inputs:
@@ -73,7 +79,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           # Consolidated overlays
-          { nixpkgs.overlays = [ overlays.stremio-linux-shell overlays.intel-ocl overlays.python3-fix ]; }
+          { nixpkgs.overlays = [ overlays.stremio-linux-shell overlays.intel-ocl overlays.python3-fix inputs.lsfg-vk.overlays.default ]; }
 
           # Import hardware scan from the new hosts/nixos directory
           ./hosts/nixos/hardware-configuration.nix

@@ -14,4 +14,6 @@
     enable = true;
     capSysNice = true;
   };
+
+  environment.systemPackages = [ pkgs.lsfg-vk ];
 }
