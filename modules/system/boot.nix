@@ -1,13 +1,6 @@
 { config, lib, pkgs, inputs, ... }:
 
 let
-  pinnedPkgs = import inputs.nixpkgs-kernel {
-    inherit (pkgs) system;
-    config.allowUnfree = true;
-  };
-in
-
-let
   # --- TOGGLE NVK HERE ---
   useNVK = false;
 in
@@ -22,9 +15,7 @@ in
     options iwlwifi bt_coex_active=0
   '';
 
-  # Pinned to nixpkgs rev 1c3fe55 (2026-04-27) for kernel 7.0.1 + nvidia 595.45.04.
-  # See flake.nix nixpkgs-kernel input for the why.
-  boot.kernelPackages = pinnedPkgs.linuxPackages_7_0;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Kernel Parameters
   boot.kernelParams = [

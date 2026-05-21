@@ -5,12 +5,6 @@
     # The main NixOS package repository (Unstable usually better for gaming/new hardware)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Pinned nixpkgs solely for boot.kernelPackages (kernel + nvidia) — frozen at the
-    # last known-good rev (kernel 7.0.1 + nvidia 595.45.04). Kernel 7.0.3 in newer
-    # nixpkgs removed VMA_LOCK_OFFSET, breaking the nvidia 595.x build. Unpin once
-    # nvidia ships a 7.0-compatible driver in nixpkgs-unstable.
-    nixpkgs-kernel.url = "github:nixos/nixpkgs/1c3fe55ad329cbcb28471bb30f05c9827f724c76";
-
     # Critical for your specific laptop model (drivers, quirks)
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
