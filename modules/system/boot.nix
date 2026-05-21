@@ -13,6 +13,10 @@ in
   boot.extraModprobeConfig = ''
     options snd-hda-intel model=asus-zenbook
     options iwlwifi bt_coex_active=0
+    # Disable GSP firmware on this Turing GPU (RTX 2070 Mobile): the GSP path
+    # intermittently silent-deadlocks during Wayland multi-GPU modeset at login on
+    # driver 595.71.05. Only valid with the proprietary driver (open = false).
+    options nvidia NVreg_EnableGpuFirmware=0
   '';
 
   boot.kernelPackages = pkgs.linuxPackages_latest;

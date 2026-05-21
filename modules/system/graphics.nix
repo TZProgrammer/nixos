@@ -22,15 +22,9 @@ in
     modesetting.enable = true;
     open = false;
     nvidiaSettings = true;
-    # Shim a `.mod` passthru: the pinned-old nvidia derivation (from nixpkgs-kernel)
-    # predates nixpkgs splitting nvidia_x11 into .bin/.mod sub-outputs, but the new
-    # nixos module reads nvidia_x11.mod. Aliasing it to the package itself works
-    # because the old single-derivation form already contains the kernel module.
-    package =
-      let p = config.boot.kernelPackages.nvidiaPackages.beta;
-      in p.overrideAttrs (old: {
-        passthru = (old.passthru or {}) // { mod = p; };
-      });
+    # beta (595.45.04) fails to build on kernel 7.0.x (VMA_LOCK_OFFSET removed);
+    # production 595.71.05 carries the fix and builds cleanly.
+    package = config.boot.kernelPackages.nvidiaPackages.production;
     nvidiaPersistenced = true;
     powerManagement.enable = true;
     prime = {
