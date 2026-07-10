@@ -40,10 +40,26 @@
       flake = false;
     };
 
-    # end-4's Hyprland dotfiles via illogical-flake wrapper
-    illogical-flake = {
-      url = "path:./illogical-flake";
+    # --- Inputs for the vendored illogical-flake home module ---
+    # (formerly nested under illogical-flake/flake.nix; flattened so edits to
+    # ./illogical-flake take effect immediately and there is a single lockfile.)
+    # dotfiles is pinned by rev: end-4/dots-hyprland restructures often and the
+    # home module is hand-matched to it, so bump deliberately, not on every
+    # `nix flake update`. To bump: change the rev (or run
+    # `nix flake update quickshell nur dotfiles`) and re-check the module.
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell?ref=refs/heads/master&rev=191085a8821b35680bba16ce5411fc9dbe912237";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nur = {
+      url = "github:nix-community/NUR/0e6e5ff852c442598d1ae8ca5f042947f123f798";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    dotfiles = {
+      url = "git+https://github.com/end-4/dots-hyprland?submodules=1&ref=refs/heads/main&rev=c04b0bbc8143a2b2166c1f699f7583cb28ff78fe";
+      flake = false;
     };
 
     # Lossless Scaling Frame Generation (Vulkan layer + Qt6 UI + CLI), v2.0.0-dev
@@ -60,7 +76,12 @@
       # Standalone home-manager config for non-NixOS machines (e.g. work laptop)
       # Usage: home-manager switch --flake .#zegertho
       homeConfigurations."zegertho" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        # Build pkgs with allowUnfree here — standalone home-manager ignores
+        # `nixpkgs.config` when it's handed an external pkgs set.
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          config.allowUnfree = true;
+        };
         extraSpecialArgs = { inherit inputs; };
         modules = [ ./home-work.nix ];
       };
@@ -75,7 +96,7 @@
           # Import hardware scan from the new hosts/nixos directory
           ./hosts/nixos/hardware-configuration.nix
 
-          # ASUS ROG Strix G512 Specific Hardware Optimizations
+          # ASUS ROG Strix G15 (model G512) hardware optimizations
           nixos-hardware.nixosModules.common-cpu-intel
           nixos-hardware.nixosModules.common-gpu-nvidia
           nixos-hardware.nixosModules.common-pc-laptop-ssd

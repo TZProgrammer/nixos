@@ -3,8 +3,7 @@
 {
   imports = [ ./home-common.nix ];
 
-  # Allow unfree packages (e.g. obsidian, spotify)
-  nixpkgs.config.allowUnfree = true;
+  # allowUnfree is set on the pkgs built in flake.nix (obsidian, spotify, etc.)
 
   # Change these for the work machine if needed
   home.username = "zegertho";

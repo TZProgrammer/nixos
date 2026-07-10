@@ -4,7 +4,9 @@
   imports = [
     ./home-common.nix
     ./modules/home/desktop.nix
-    inputs.illogical-flake.homeManagerModules.default
+    # Vendored end-4 Hyprland module, imported directly (see flake.nix inputs).
+    # It reads inputs.{quickshell,nur,dotfiles} from the flake's specialArgs.
+    ./illogical-flake/home-module.nix
     ./hyprland-endots-keybinds.nix
   ];
 
