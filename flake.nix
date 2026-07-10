@@ -55,9 +55,6 @@
   };
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager, ... }@inputs:
-    let
-      overlays = import ./overlays/default.nix { inherit inputs; };
-    in
     {
 
       # Standalone home-manager config for non-NixOS machines (e.g. work laptop)
@@ -73,7 +70,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           # Consolidated overlays
-          { nixpkgs.overlays = [ overlays.stremio-linux-shell overlays.intel-ocl overlays.python3-fix inputs.lsfg-vk.overlays.default ]; }
+          { nixpkgs.overlays = [ inputs.lsfg-vk.overlays.default ]; }
 
           # Import hardware scan from the new hosts/nixos directory
           ./hosts/nixos/hardware-configuration.nix
