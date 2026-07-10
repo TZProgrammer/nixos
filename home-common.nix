@@ -32,9 +32,6 @@
     gemini-cli
     starship
 
-    # --- Git/GitHub ---
-    gh
-
     # --- Dev Tools ---
     gcc
     clang-tools
@@ -42,7 +39,10 @@
     stylua
     unzip
     nodejs
-    python3
+    # lowPrio: on the NixOS host, illogical-flake also installs a python3.withPackages
+    # `pythonEnv`; both ship bin/idle3.13 etc. Lower this one so the env wins the
+    # buildEnv collision. (Harmless on the work config, which has no pythonEnv.)
+    (lib.lowPrio python3)
     python3Packages.pip
     go
     gofumpt
@@ -67,33 +67,41 @@
     nixpkgs-fmt
   ];
 
-  # 2. Zoxide, Nix-index
+  # 2. nix-index
   programs.nix-index = {
     enable = true;
     enableZshIntegration = true;
   };
 
+  # 3. starship
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
   };
 
+  # 4. zoxide
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;
     options = [ "--cmd j" ];
   };
 
-  # 3. Lazygit
+  # 5. Lazygit
   programs.lazygit = {
     enable = true;
     settings.gui.theme.lightTheme = false;
   };
 
-  # 8. FZF
+  # 6. FZF
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
     defaultCommand = "fd --type f";
+  };
+  # 7. gh
+  programs.gh = {
+    enable = true;
+    gitCredentialHelper.enable = true;
+    settings.git_protocol = "https";
   };
 }
