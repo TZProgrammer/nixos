@@ -9,7 +9,9 @@
         # Disables the BlueZ input plugin so the kernel's hid_playstation driver handles it
         DisablePlugins = "input";
 
-        # Forces Bluetooth Classic over LE for higher bandwidth and polling rates
+        # Forces Bluetooth Classic over LE for higher bandwidth and polling rates.
+        # Side effect: disables BLE entirely — LE-only devices (many earbuds,
+        # some mice) will not pair while this is "bredr". Switch to "dual" if needed.
         ControllerMode = "bredr";
 
         # Prevent BlueZ from suspending the adapter
