@@ -34,6 +34,8 @@
   fileSystems."/mnt/arch_home" =
     { device = "/dev/disk/by-uuid/0dcb5e70-bec3-4256-9e7f-e16c6372a4e1";
       fsType = "ext4";
+      # nofail + short timeout so a missing/dead Arch disk can't hang boot.
+      options = [ "nofail" "x-systemd.device-timeout=5s" ];
     };
 
   swapDevices = [ ];

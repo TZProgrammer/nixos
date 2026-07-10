@@ -5,7 +5,9 @@
   
   # Enable networking
   networking.networkmanager.enable = true;
-  networking.firewall.trustedInterfaces = [ "wlo1" ];
+  # NOTE: do NOT add wlo1 to firewall.trustedInterfaces — that accepts all
+  # inbound traffic on Wi-Fi (untrusted networks). Steam already opens its own
+  # ports via remotePlay/dedicatedServer.openFirewall in gaming.nix.
 
   # ProtonVPN via WireGuard
   # Before rebuilding: save your private key to /etc/wireguard/protonvpn.key (chmod 600)
