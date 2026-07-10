@@ -1,8 +1,8 @@
 { config, lib, pkgs, inputs, ... }:
 
 let
-  # --- TOGGLE NVK HERE ---
-  useNVK = false;
+  # Toggle via my.gpu.useNVK (declared in modules/system/graphics.nix).
+  useNVK = config.my.gpu.useNVK;
 in
 {
   # Bootloader.
