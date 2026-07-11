@@ -97,6 +97,8 @@
     enable = true;
     enableZshIntegration = true;
     defaultCommand = "fd --type f";
+    # Let Atuin own Ctrl-R; disabling fzf's history widget clears the binding conflict.
+    historyWidget.command = "";
   };
   # 7. gh
   programs.gh = {
