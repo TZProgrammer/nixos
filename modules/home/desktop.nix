@@ -14,6 +14,7 @@
     # Productivity
     obsidian
     kdePackages.dolphin
+    foliate
 
     # Media & Personal
     spotify
