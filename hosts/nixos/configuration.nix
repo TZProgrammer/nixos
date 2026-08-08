@@ -168,7 +168,10 @@
   # allowUnfree is set in modules/system/nix.nix.
   # pnpm 10.29.2 (pulled transitively as a build-time dep) is flagged insecure in
   # current nixpkgs. It's only used offline inside the build sandbox, so allow it.
-  nixpkgs.config.permittedInsecurePackages = [ "pnpm-10.29.2" ];
+  nixpkgs.config.permittedInsecurePackages = [
+    "pnpm-10.29.2"
+    "electron-40.10.5"
+  ];
 
   environment.systemPackages = with pkgs; [
     wget
