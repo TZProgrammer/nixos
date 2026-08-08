@@ -131,6 +131,38 @@
     keyboards.internal.configFile = "${inputs.kanata-config}/kanata.kbd";
   };
 
+  # private.kbd (text-expansion macros) is gitignored in kanata-config, so
+  # the flake input never has it. sops-nix decrypts it at runtime and this
+  # override assembles a config dir next to the store files so kanata's
+  # relative `include "private.kbd"` resolves.
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+  sops.secrets."kanata-private-kbd" = {
+    sopsFile = ../../secrets/kanata.yaml;
+    key = "private_kbd";
+  };
+
+  systemd.services.kanata-internal.serviceConfig = {
+    LoadCredential = "private.kbd:${config.sops.secrets."kanata-private-kbd".path}";
+    ExecStart = lib.mkForce (
+      let
+        kanataCfg = config.services.kanata.keyboards.internal;
+      in
+      "${pkgs.writeShellScript "kanata-internal-start" ''
+        set -euo pipefail
+        cfgdir="$RUNTIME_DIRECTORY/cfg"
+        mkdir -p "$cfgdir"
+        ln -sf "${inputs.kanata-config}/kanata.kbd" "$cfgdir/kanata.kbd"
+        ln -sf "${inputs.kanata-config}/common.kbd" "$cfgdir/common.kbd"
+        ln -sf "${inputs.kanata-config}/platform-linux.kbd" "$cfgdir/platform-linux.kbd"
+        cp "$CREDENTIALS_DIRECTORY/private.kbd" "$cfgdir/private.kbd"
+        exec ${lib.getExe config.services.kanata.package} \
+          --cfg "$cfgdir/kanata.kbd" \
+          --symlink-path "$RUNTIME_DIRECTORY/internal" \
+          ${lib.optionalString (kanataCfg.port != null) "--port ${toString kanataCfg.port}"}
+      ''}"
+    );
+  };
+
   hardware.i2c.enable = true; # Required for ddcutil (external monitor brightness via DDC/CI)
 
   # allowUnfree is set in modules/system/nix.nix.
