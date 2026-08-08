@@ -29,8 +29,12 @@ in
       open = false;
       nvidiaSettings = true;
       # beta (595.45.04) fails to build on kernel 7.0.x (VMA_LOCK_OFFSET removed);
-      # production 595.71.05 carries the fix and builds cleanly.
-      package = config.boot.kernelPackages.nvidiaPackages.production;
+      # production 595.71.05 carried the fix and built cleanly, so production was pinned.
+      # Moved to `latest` (610.x, the new-feature branch) 2026-08-04: production was still
+      # on the 595 line despite 610 being out for a while. If this fails to build against
+      # the current kernel, that's the same class of kernel-API-compat issue documented
+      # above for beta — check the build log for a missing/renamed kernel symbol first.
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
       nvidiaPersistenced = true;
       powerManagement.enable = true;
       prime = {
