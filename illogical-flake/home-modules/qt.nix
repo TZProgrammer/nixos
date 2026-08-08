@@ -48,7 +48,6 @@ in
           pkgs.hicolor-icon-theme 
           pkgs.papirus-icon-theme
           customPkgs.illogical-impulse-oneui4-icons
-          pkgs.gnome-icon-theme
           pkgs.kdePackages.breeze-icons
           pkgs.lxqt.pavucontrol-qt
           pkgs.pavucontrol
