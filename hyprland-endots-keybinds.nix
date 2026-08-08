@@ -109,9 +109,40 @@ in
       hl.bind("SUPER + SHIFT + k", hl.dsp.window.move({ direction = "up"    }))
       hl.bind("SUPER + SHIFT + j", hl.dsp.window.move({ direction = "down"  }))
 
-      -- --- Monitor focus / move workspace to monitor ---
-      hl.bind("SUPER + Tab",         hl.dsp.focus({ monitor = "+1" }))
-      hl.bind("SUPER + SHIFT + Tab", hl.dsp.workspace.move({ monitor = "+1" }))
+      -- --- Monitor focus / move workspace to monitor (stack-based backfill) ---
+      -- Each monitor keeps a LIFO stack of the workspaces it previously
+      -- displayed. Moving the active workspace to the other monitor pushes
+      -- that monitor's current workspace onto its stack (buried behind the
+      -- incoming one) and pops the source monitor's stack to backfill it.
+      -- Moving the workspace back later pops the target stack again,
+      -- restoring exactly what was there before -- e.g. W8 on the right,
+      -- move W1 in (right stack: [W8], showing W1), move W1 back out
+      -- (right pops back to W8), instead of Hyprland picking an arbitrary
+      -- workspace like W7.
+      hl.bind("SUPER + Tab", hl.dsp.focus({ monitor = "+1" }))
+
+      local monitor_stacks = { ["eDP-1"] = {}, ["DP-1"] = {} }
+
+      hl.bind("SUPER + SHIFT + Tab", function()
+          local cur_mon = hl.get_active_monitor()
+          if not cur_mon then return end
+          local src_name = cur_mon.name
+          local dst_name = (src_name == "eDP-1") and "DP-1" or "eDP-1"
+          local dst_mon = hl.get_monitor(dst_name)
+          if not dst_mon then return end
+
+          local moving_ws = hl.get_active_workspace(src_name)
+          local displaced_ws = dst_mon.active_workspace
+          if not moving_ws or not displaced_ws then return end
+
+          table.insert(monitor_stacks[dst_name], displaced_ws.name)
+          hl.dispatch(hl.dsp.workspace.move({ workspace = moving_ws.name, monitor = dst_name }))
+
+          local backfill = table.remove(monitor_stacks[src_name])
+          if backfill then
+              hl.dispatch(hl.dsp.focus({ workspace = backfill, monitor = src_name }))
+          end
+      end)
 
       -- --- App launcher & terminal ---
       hl.bind("SUPER + SPACE",  hl.dsp.exec_cmd("fuzzel"))
