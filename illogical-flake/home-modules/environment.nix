@@ -17,10 +17,13 @@ in
       qsConfig = "${config.home.homeDirectory}/.config/quickshell/ii";
     };
     
-    # Ensure variables are available to systemd services (and Hyprland)
-    systemd.user.sessionVariables = config.home.sessionVariables // {
-      QT_STYLE_OVERRIDE = lib.mkForce "";
-    };
+    # Ensure variables are available to systemd services (and Hyprland).
+    # Empty-string values are dropped: systemd's environment.d parser rejects
+    # bare "NAME=" assignments (logged as "invalid syntax .. ignoring" on every
+    # login) and they're already exported correctly via the shell rc files.
+    systemd.user.sessionVariables = lib.filterAttrs (_: v: v != "") (
+      config.home.sessionVariables // { QT_STYLE_OVERRIDE = ""; }
+    );
 
     # Install qt6ct for Qt theming
     home.packages = [ pkgs.qt6Packages.qt6ct ];
