@@ -40,6 +40,11 @@
       flake = false;
     };
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # --- Inputs for the vendored illogical-flake home module ---
     # (formerly nested under illogical-flake/flake.nix; flattened so edits to
     # ./illogical-flake take effect immediately and there is a single lockfile.)
@@ -68,6 +73,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Pin to nixpkgs PR #547604 (proton-ge-bin: GE-Proton11-1 -> GE-Proton11-3)
+    # until it's merged upstream: https://github.com/NixOS/nixpkgs/pull/547604
+    proton-ge-pr-nixpkgs.url = "github:makuru-org/nixpkgs/115953e9d353361e413ee616aec6b65253fa80c8";
+
   };
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager, ... }@inputs:
@@ -91,7 +100,18 @@
         specialArgs = { inherit inputs; };
         modules = [
           # Consolidated overlays
-          { nixpkgs.overlays = [ inputs.lsfg-vk.overlays.default ]; }
+          {
+            nixpkgs.overlays = [
+              inputs.lsfg-vk.overlays.default
+              # proton-ge-bin from nixpkgs PR #547604, see flake input above
+              (final: prev: {
+                proton-ge-bin = (import inputs.proton-ge-pr-nixpkgs {
+                  inherit (prev) system;
+                  config.allowUnfree = true;
+                }).proton-ge-bin;
+              })
+            ];
+          }
 
           # Import hardware scan from the new hosts/nixos directory
           ./hosts/nixos/hardware-configuration.nix
@@ -103,6 +123,8 @@
 
           # Import the main configuration from the new hosts/nixos directory
           ./hosts/nixos/configuration.nix
+
+          inputs.sops-nix.nixosModules.sops
 
           home-manager.nixosModules.home-manager
           {
