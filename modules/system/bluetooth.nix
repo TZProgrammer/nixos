@@ -28,7 +28,7 @@
 
   # Logitech Lightspeed wireless support (udev rules + Solaar)
   hardware.logitech.wireless.enable = true;
-  hardware.logitech.wireless.enableGraphical = true;
+  programs.solaar.enable = true;
 
   # Piper mouse configuration daemon (button remapping, DPI, LEDs)
   services.ratbagd.enable = true;
