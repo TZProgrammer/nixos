@@ -14,6 +14,8 @@
   programs.illogical-impulse.enable = true;
   # kitty config is managed by modules/home/kitty.nix
   programs.illogical-impulse.dotfiles.kitty.enable = false;
+  # zsh is the shell in use; skip fish (and its generated completions, e.g. wf-recorder's)
+  programs.illogical-impulse.dotfiles.fish.enable = false;
 
   home.username = "zegertho";
   home.homeDirectory = "/home/zegertho";
