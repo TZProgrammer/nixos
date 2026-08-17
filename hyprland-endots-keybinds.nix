@@ -209,6 +209,9 @@ in
       hl.window_rule({ match = { class = "^obsidian$"                 }, workspace = "10" })
 
       hl.window_rule({ match = { class = "^steam$",  title = "^(?!Steam$).*" },           float = true })
+      -- Steam is launched silently on workspace 5 at login; stop it from
+      -- stealing focus off whatever workspace/window you're actually on.
+      hl.window_rule({ match = { class = "^steam$" },                                     no_initial_focus = true })
       hl.window_rule({ match = { title = "^[Pp]icture.in.[Pp]icture$"        },           float = true })
       hl.window_rule({ match = { title = "^[Pp]icture.in.[Pp]icture$"        },           pin   = true })
 
