@@ -73,9 +73,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Pin to nixpkgs PR #547604 (proton-ge-bin: GE-Proton11-1 -> GE-Proton11-3)
-    # until it's merged upstream: https://github.com/NixOS/nixpkgs/pull/547604
-    proton-ge-pr-nixpkgs.url = "github:makuru-org/nixpkgs/115953e9d353361e413ee616aec6b65253fa80c8";
+    # Pin to nixpkgs PR #551916 (proton-ge-bin: GE-Proton11-3 -> GE-Proton11-5)
+    # until it's merged upstream: https://github.com/NixOS/nixpkgs/pull/551916
+    proton-ge-pr-nixpkgs.url = "github:Gliczy/nixpkgs/df53b72a5b5233fae66c0d1bb85a3215b3c230bf";
 
   };
 
