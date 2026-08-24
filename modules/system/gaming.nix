@@ -37,7 +37,11 @@ in
   systemd.services.flatpak-dlss-updater = {
     wantedBy = [ "multi-user.target" ];
     wants = [ "network-online.target" ];
-    after = [ "network-online.target" ];
+    # Also wait for adguardhome: all system DNS goes through it, and without
+    # this ordering both units only depend on network-online.target
+    # independently, so flatpak's flathub.org lookup can race AdGuard's
+    # startup and fail (seen 2026-08-24, recovered via the retry below).
+    after = [ "network-online.target" "adguardhome.service" ];
     path = [ pkgs.flatpak ];
     serviceConfig = {
       Type = "oneshot";
