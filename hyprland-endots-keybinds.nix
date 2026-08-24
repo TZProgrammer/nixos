@@ -69,6 +69,15 @@ in
   xdg.configFile."hypr/custom/execs.lua" = lib.mkForce {
     text = ''
       hl.on("hyprland.start", function()
+          -- Hyprland only imports the environment into the systemd user
+          -- manager on startup; it never starts graphical-session.target
+          -- itself, and this setup has no hyprland-session.target unit to
+          -- pull it in either. Without this, xdg-desktop-portal (and
+          -- anything that depends on it -- screen sharing, screenshot
+          -- pickers, sandboxed file-open dialogs) fails to start with
+          -- "Dependency failed for Portal service" for the entire session.
+          hl.exec_cmd("systemctl --user start hyprland-session.target")
+
           -- wl-gammarelay-rs for external monitor gamma dimming
           hl.exec_cmd("wl-gammarelay-rs")
 
@@ -220,6 +229,20 @@ in
       hl.window_rule({ match = { class = "^prismlauncher$" }, immediate = true })
       hl.window_rule({ match = { title = "^Celeste$"       }, immediate = true })
     '';
+  };
+
+  # graphical-session.target refuses manual/direct starts -- it can only be
+  # pulled in via a BindsTo dependency from another unit. home-manager's
+  # native Hyprland module normally provides this target automatically; we
+  # don't use that module (custom Lua overlay instead), so define it
+  # ourselves and start it from custom/execs.lua above.
+  systemd.user.targets.hyprland-session = {
+    Unit = {
+      Description = "Hyprland compositor session";
+      BindsTo = [ "graphical-session.target" ];
+      Wants = [ "graphical-session-pre.target" ];
+      After = [ "graphical-session-pre.target" ];
+    };
   };
 
   home.packages = (with pkgs; [
