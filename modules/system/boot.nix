@@ -8,6 +8,12 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  # Without a limit, systemd-boot keeps every generation's kernel+initrd on
+  # the ESP forever. This filled the 1GB ESP to 100% (found 2026-08-24,
+  # investigating unrelated boot flakiness), which in turn broke
+  # systemd-boot-random-seed.service ("No space left on device") and can
+  # affect other boot-time writes. Keep only the last 20 generations bootable.
+  boot.loader.systemd-boot.configurationLimit = 20;
   
   # Fix for audio on this laptop - asus-zenbook model hint resolves sound issues
   boot.extraModprobeConfig = ''
