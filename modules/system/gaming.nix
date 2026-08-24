@@ -50,12 +50,18 @@ in
       StartLimitBurst = 5;
     };
     script = ''
-      installed=$(flatpak info --system io.github.recol.dlss-updater 2>/dev/null \
-        | sed -n 's/^[[:space:]]*Version:[[:space:]]*//p')
-      if [ "$installed" != "${dlssUpdaterVersion}" ]; then
+      # Bundle-installed flatpaks (from a local .flatpak file, as opposed to
+      # a repo) have no "Version:" field in `flatpak info` output, so we
+      # can't compare against dlssUpdaterVersion that way. Instead stamp the
+      # exact bundle store path (which changes whenever the version/hash
+      # above changes) to a marker file after a successful install, and
+      # skip re-installing when it already matches.
+      stamp=/var/lib/flatpak-dlss-updater.stamp
+      if [ ! -f "$stamp" ] || [ "$(cat "$stamp")" != "${dlssUpdaterBundle}" ]; then
         flatpak remote-add --system --if-not-exists flathub \
           https://dl.flathub.org/repo/flathub.flatpakrepo
-        flatpak install --system --noninteractive ${dlssUpdaterBundle}
+        flatpak install --system --noninteractive --reinstall ${dlssUpdaterBundle}
+        echo "${dlssUpdaterBundle}" > "$stamp"
       fi
     '';
   };
