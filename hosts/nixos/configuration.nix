@@ -89,20 +89,26 @@
       snapshot_preserve_min = "2d";
       snapshot_preserve = "7d 4w";
       volume."/" = {
-        snapshot_dir = "/btrbk_snapshots";
+        # Relative (no leading /): resolves to <volume path>/btrbk_snapshots,
+        # i.e. /btrbk_snapshots here. A leading / would make every volume
+        # point at the same absolute path instead of one dir per volume.
+        snapshot_dir = "btrbk_snapshots";
         subvolume = ".";
       };
       # @home is a sibling subvolume; btrfs snapshots don't cross subvolume
       # boundaries, so it needs its own volume entry or it goes unprotected.
       volume."/home" = {
-        snapshot_dir = "/btrbk_snapshots";
+        snapshot_dir = "btrbk_snapshots";
         subvolume = ".";
       };
     };
   };
 
-  # btrbk requires the snapshot dirs to exist ahead of time.
-  systemd.tmpfiles.rules = [ "d /home/btrbk_snapshots 0755 root root -" ];
+  # btrbk requires the snapshot dirs to exist ahead of time, one per volume.
+  systemd.tmpfiles.rules = [
+    "d /btrbk_snapshots 0755 root root -"
+    "d /home/btrbk_snapshots 0755 root root -"
+  ];
 
   services.printing.enable = true;
 
