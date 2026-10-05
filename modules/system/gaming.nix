@@ -11,13 +11,40 @@ let
     url = "https://github.com/Recol/DLSS-Updater/releases/download/V${dlssUpdaterVersion}/DLSS_Updater-${dlssUpdaterVersion}.flatpak";
     hash = "sha256-o4SVCfrGAaMim1jRS668E4hv0EDHZzAkXGqiCRrJ9aQ=";
   };
+
+  # nixpkgs is still pinned to GE-Proton11-6; override to GE-Proton11-7 until
+  # it catches up. To bump further: change the version and refresh the hash
+  # with `nix store prefetch-file --unpack <release tar.gz url>`.
+  protonGeVersion = "GE-Proton11-7";
+  protonGeSrc = pkgs.fetchzip {
+    url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/${protonGeVersion}/${protonGeVersion}-x86_64.tar.gz";
+    hash = "sha256-ftW0vE45v2JsbaYqo/So0ZFfvdtakHX0XEXEE4TdxLk=";
+  };
+  protonGeToolName = "${protonGeVersion}-x86_64";
+  protonGeBin = pkgs.proton-ge-bin.overrideAttrs (old: {
+    version = protonGeVersion;
+    # src/toolName are normally sourced from passthru.variants via `inherit
+    # (finalAttrs...)`, which doesn't get re-threaded through overrideAttrs,
+    # so set them directly at the top level as well as in passthru.
+    __intentionallyOverridingVersion = true;
+    src = protonGeSrc;
+    toolName = protonGeToolName;
+    passthru = old.passthru // {
+      variants = old.passthru.variants // {
+        x86_64-linux = old.passthru.variants.x86_64-linux // {
+          toolName = protonGeToolName;
+          src = protonGeSrc;
+        };
+      };
+    };
+  });
 in
 {
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
-    extraCompatPackages = with pkgs; [ proton-ge-bin ];
+    extraCompatPackages = [ protonGeBin ];
     gamescopeSession.enable = true;
   };
 
