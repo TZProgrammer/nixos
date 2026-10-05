@@ -7,7 +7,12 @@ let
   pythonEnv = cfg.internal.pythonEnv;
   
   # The raw QuickShell package
-  qsPackage = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  qsPackage = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+    # breakpad currently fails to build against nixos-unstable's toolchain
+    # (undefined vtable for FastSourceLineResolver::Module); disable crash
+    # reporting until that's fixed upstream.
+    withCrashReporter = false;
+  };
   
   # Runtime dependencies
   qtImports = [
