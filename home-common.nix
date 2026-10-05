@@ -14,6 +14,7 @@
   home.packages = with pkgs; [
     # --- Audio ---
     qpwgraph
+    crosspipe
 
     # --- System Monitoring & Search ---
     bottom
