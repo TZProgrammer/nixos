@@ -118,36 +118,73 @@ in
       hl.bind("SUPER + SHIFT + k", hl.dsp.window.move({ direction = "up"    }))
       hl.bind("SUPER + SHIFT + j", hl.dsp.window.move({ direction = "down"  }))
 
-      -- --- Monitor focus / move workspace to monitor (stack-based backfill) ---
-      -- Each monitor keeps a LIFO stack of the workspaces it previously
-      -- displayed. Moving the active workspace to the other monitor pushes
-      -- that monitor's current workspace onto its stack (buried behind the
-      -- incoming one) and pops the source monitor's stack to backfill it.
-      -- Moving the workspace back later pops the target stack again,
-      -- restoring exactly what was there before -- e.g. W8 on the right,
-      -- move W1 in (right stack: [W8], showing W1), move W1 back out
-      -- (right pops back to W8), instead of Hyprland picking an arbitrary
-      -- workspace like W7.
+      -- --- Monitor focus / move workspace to monitor (history backfill) ---
+      -- Each monitor keeps an MRU history of the workspaces it has shown,
+      -- updated on every workspace change (not just moves), so a plain
+      -- W8 -> W1 switch on the same monitor is remembered too. Moving the
+      -- active workspace to the other monitor backfills the source monitor
+      -- with its most recently used remaining workspace -- e.g. W8, switch
+      -- to W1, move W1 left: the right monitor shows W8 again instead of
+      -- Hyprland picking an arbitrary workspace like W7.
       hl.bind("SUPER + Tab", hl.dsp.focus({ monitor = "+1" }))
 
-      local monitor_stacks = { ["eDP-1"] = {}, ["DP-1"] = {} }
+      local ws_history = {}  -- monitor name -> list of workspace names, MRU first
+
+      local function history_touch(mon_name, ws_name)
+          if ws_name:sub(1, 8) == "special:" then return end
+          for name, list in pairs(ws_history) do
+              for i = #list, 1, -1 do
+                  if list[i] == ws_name and (name ~= mon_name or i ~= 1) then
+                      table.remove(list, i)
+                  end
+              end
+          end
+          local list = ws_history[mon_name]
+          if not list then
+              list = {}
+              ws_history[mon_name] = list
+          end
+          if list[1] ~= ws_name then table.insert(list, 1, ws_name) end
+      end
+
+      local function history_sync()
+          for _, mon in ipairs(hl.get_monitors()) do
+              local ws = mon.active_workspace
+              if ws then history_touch(mon.name, ws.name) end
+          end
+      end
+
+      hl.on("hyprland.start", history_sync)
+      hl.on("workspace.active", history_sync)
+      hl.on("monitor.focused", history_sync)
 
       hl.bind("SUPER + SHIFT + Tab", function()
+          history_sync()
           local cur_mon = hl.get_active_monitor()
           if not cur_mon then return end
           local src_name = cur_mon.name
           local dst_name = (src_name == "eDP-1") and "DP-1" or "eDP-1"
-          local dst_mon = hl.get_monitor(dst_name)
-          if not dst_mon then return end
+          if not hl.get_monitor(dst_name) then return end
 
           local moving_ws = hl.get_active_workspace(src_name)
-          local displaced_ws = dst_mon.active_workspace
-          if not moving_ws or not displaced_ws then return end
+          if not moving_ws then return end
 
-          table.insert(monitor_stacks[dst_name], displaced_ws.name)
+          -- Pick the backfill before moving: most recent workspace this
+          -- monitor showed that still exists and is not visible elsewhere.
+          local visible = {}
+          for _, mon in ipairs(hl.get_monitors()) do
+              if mon.active_workspace then visible[mon.active_workspace.name] = true end
+          end
+          local backfill
+          for _, name in ipairs(ws_history[src_name] or {}) do
+              if not visible[name] and hl.get_workspace(name) then
+                  backfill = name
+                  break
+              end
+          end
+
           hl.dispatch(hl.dsp.workspace.move({ workspace = moving_ws.name, monitor = dst_name }))
 
-          local backfill = table.remove(monitor_stacks[src_name])
           if backfill then
               hl.dispatch(hl.dsp.focus({ workspace = backfill, monitor = src_name }))
           end
