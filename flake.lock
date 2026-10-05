@@ -307,22 +307,6 @@
         "type": "github"
       }
     },
-    "proton-ge-pr-nixpkgs": {
-      "locked": {
-        "lastModified": 1786546485,
-        "narHash": "sha256-SMnLP6b+I5KJnCRJE5jUEGajJauh5MKn3JCW1yeXCyA=",
-        "owner": "Gliczy",
-        "repo": "nixpkgs",
-        "rev": "df53b72a5b5233fae66c0d1bb85a3215b3c230bf",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Gliczy",
-        "repo": "nixpkgs",
-        "rev": "df53b72a5b5233fae66c0d1bb85a3215b3c230bf",
-        "type": "github"
-      }
-    },
     "quickshell": {
       "inputs": {
         "nixpkgs": [
@@ -356,7 +340,6 @@
         "nixpkgs": "nixpkgs_2",
         "nur": "nur",
         "oh-my-tmux": "oh-my-tmux",
-        "proton-ge-pr-nixpkgs": "proton-ge-pr-nixpkgs",
         "quickshell": "quickshell",
         "sops-nix": "sops-nix",
         "tmux-config": "tmux-config",

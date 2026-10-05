@@ -73,10 +73,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Pin to nixpkgs PR #551916 (proton-ge-bin: GE-Proton11-3 -> GE-Proton11-5)
-    # until it's merged upstream: https://github.com/NixOS/nixpkgs/pull/551916
-    proton-ge-pr-nixpkgs.url = "github:Gliczy/nixpkgs/df53b72a5b5233fae66c0d1bb85a3215b3c230bf";
-
   };
 
   outputs = { self, nixpkgs, nixos-hardware, home-manager, ... }@inputs:
@@ -103,13 +99,6 @@
           {
             nixpkgs.overlays = [
               inputs.lsfg-vk.overlays.default
-              # proton-ge-bin from nixpkgs PR #547604, see flake input above
-              (final: prev: {
-                proton-ge-bin = (import inputs.proton-ge-pr-nixpkgs {
-                  inherit (prev) system;
-                  config.allowUnfree = true;
-                }).proton-ge-bin;
-              })
             ];
           }
 
