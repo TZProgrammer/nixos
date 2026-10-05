@@ -45,6 +45,11 @@ in
       };
     };
 
+    services.udev.extraRules = ''
+      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:01:00.0", SYMLINK+="dri/nvidia-dgpu"
+      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:00:02.0", SYMLINK+="dri/intel-igpu"
+    '';
+
     environment.sessionVariables = {
       # VA-API hardware video acceleration (Intel iGPU)
       LIBVA_DRIVER_NAME = "iHD";
@@ -55,7 +60,10 @@ in
       # render + scanout device. DP-1 is wired to the dGPU, so this avoids a
       # cross-GPU copy that caused cursor/window lag on the external monitor.
       # eDP-1 (Intel) becomes the secondary cross-GPU output.
-      AQ_DRM_DEVICES = "/dev/dri/card0:/dev/dri/card1";
+      # Stable udev symlinks (below) rather than cardN, whose numbering
+      # depends on driver probe order; by-path names contain ':' which
+      # would break this colon-separated list.
+      AQ_DRM_DEVICES = "/dev/dri/nvidia-dgpu:/dev/dri/intel-igpu";
     };
   };
 }
