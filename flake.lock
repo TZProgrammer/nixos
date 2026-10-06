@@ -139,11 +139,11 @@
     "kanata-config": {
       "flake": false,
       "locked": {
-        "lastModified": 1790976543,
-        "narHash": "sha256-SGJ3cy6Ie3Chanjr+Y2h6vu98IGUteTPxW/LKD065uw=",
+        "lastModified": 1791251963,
+        "narHash": "sha256-3/2vmjX9rMf7SE4RtmoVgSGg21ujVTR/JSHhfEedSjY=",
         "ref": "refs/heads/main",
-        "rev": "f38ee98155a1d2c8f50b4e1eefb190b8074ed0ed",
-        "revCount": 41,
+        "rev": "ba1a22b6e9f11c3031302134dc37b2f4b9798a5e",
+        "revCount": 42,
         "type": "git",
         "url": "ssh://git@github.com/TZProgrammer/kanata-configuration.git"
       },
