@@ -118,17 +118,20 @@ in
       hl.bind("SUPER + SHIFT + k", hl.dsp.window.move({ direction = "up"    }))
       hl.bind("SUPER + SHIFT + j", hl.dsp.window.move({ direction = "down"  }))
 
-      -- --- Monitor focus / move workspace to monitor (history backfill) ---
-      -- Each monitor keeps an MRU history of the workspaces it has shown,
-      -- updated on every workspace change (not just moves), so a plain
-      -- W8 -> W1 switch on the same monitor is remembered too. Moving the
-      -- active workspace to the other monitor backfills the source monitor
-      -- with its most recently used remaining workspace -- e.g. W8, switch
-      -- to W1, move W1 left: the right monitor shows W8 again instead of
-      -- Hyprland picking an arbitrary workspace like W7.
+      -- --- Monitor focus / move workspace to monitor ---
+      -- SUPER+SHIFT+Tab sends the active workspace to the other monitor and
+      -- backfills the monitor it left, so Hyprland does not pick the lowest
+      -- workspace id for it. The backfill is, in order:
+      --   1. the workspace the moved one hid when it arrived on this monitor
+      --      (so moving a workspace over and straight back restores both
+      --      monitors exactly), as long as nothing has changed since;
+      --   2. the monitor's most recently used workspace that still exists
+      --      and is not on screen (per-monitor MRU history).
       hl.bind("SUPER + Tab", hl.dsp.focus({ monitor = "+1" }))
 
       local ws_history = {}  -- monitor name -> list of workspace names, MRU first
+      local displaced = {}   -- moved workspace name -> { mon = monitor it landed on, ws = workspace it hid there }
+      local moving = false   -- true while the move bind runs, so Hyprland's transient filler workspace is not recorded
 
       local function history_touch(mon_name, ws_name)
           if ws_name:sub(1, 8) == "special:" then return end
@@ -148,9 +151,20 @@ in
       end
 
       local function history_sync()
+          if moving then return end
+          local active = {}
           for _, mon in ipairs(hl.get_monitors()) do
               local ws = mon.active_workspace
-              if ws then history_touch(mon.name, ws.name) end
+              if ws then
+                  active[mon.name] = ws.name
+                  history_touch(mon.name, ws.name)
+              end
+          end
+          -- A round-trip record only holds while the moved workspace is still
+          -- what its new monitor shows; any other change means the user has
+          -- moved on and plain MRU takes over.
+          for ws_name, rec in pairs(displaced) do
+              if active[rec.mon] ~= ws_name then displaced[ws_name] = nil end
           end
       end
 
@@ -158,7 +172,7 @@ in
       hl.on("workspace.active", history_sync)
       hl.on("monitor.focused", history_sync)
 
-      hl.bind("SUPER + SHIFT + Tab", function()
+      local function move_workspace_to_other_monitor()
           history_sync()
           local cur_mon = hl.get_active_monitor()
           if not cur_mon then return end
@@ -168,27 +182,44 @@ in
 
           local moving_ws = hl.get_active_workspace(src_name)
           if not moving_ws then return end
+          local dst_ws = hl.get_active_workspace(dst_name)
 
-          -- Pick the backfill before moving: most recent workspace this
-          -- monitor showed that still exists and is not visible elsewhere.
           local visible = {}
           for _, mon in ipairs(hl.get_monitors()) do
               if mon.active_workspace then visible[mon.active_workspace.name] = true end
           end
+          local function usable(name)
+              return name and not visible[name] and hl.get_workspace(name)
+          end
+
+          -- Backfill for the source monitor, decided before the move. First
+          -- choice: whatever this workspace hid when it arrived here, so moving
+          -- it straight back restores both monitors. Otherwise the monitor's
+          -- most recently used workspace that still exists and is not on screen.
           local backfill
-          for _, name in ipairs(ws_history[src_name] or {}) do
-              if not visible[name] and hl.get_workspace(name) then
-                  backfill = name
-                  break
+          local rec = displaced[moving_ws.name]
+          if rec and rec.mon == src_name and usable(rec.ws) then backfill = rec.ws end
+          if not backfill then
+              for _, name in ipairs(ws_history[src_name] or {}) do
+                  if usable(name) then backfill = name; break end
               end
           end
 
+          moving = true
           hl.dispatch(hl.dsp.workspace.move({ workspace = moving_ws.name, monitor = dst_name }))
-
           if backfill then
-              hl.dispatch(hl.dsp.focus({ workspace = backfill, monitor = src_name }))
+              -- focus() ignores `workspace` when `monitor` is also given, so
+              -- focus the source monitor first, then switch its workspace.
+              hl.dispatch(hl.dsp.focus({ monitor = src_name }))
+              hl.dispatch(hl.dsp.focus({ workspace = backfill }))
           end
-      end)
+          moving = false
+
+          displaced[moving_ws.name] = dst_ws and { mon = dst_name, ws = dst_ws.name } or nil
+          history_sync()
+      end
+
+      hl.bind("SUPER + SHIFT + Tab", move_workspace_to_other_monitor)
 
       -- --- App launcher & terminal ---
       hl.bind("SUPER + SPACE",  hl.dsp.exec_cmd("fuzzel"))
@@ -206,7 +237,6 @@ in
       hl.bind("SUPER + CTRL + F", hl.dsp.exec_cmd("firefox"))
       hl.bind("SUPER + CTRL + G", hl.dsp.exec_cmd("steam"))
       hl.bind("SUPER + CTRL + M", hl.dsp.exec_cmd("stremio-linux-shell"))
-      hl.bind("SUPER + CTRL + S", hl.dsp.exec_cmd("spotify"))
 
       -- --- Screenshot ---
       hl.bind("SUPER + CTRL + P", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
@@ -218,8 +248,7 @@ in
       hl.bind("SUPER + CTRL + J", hl.dsp.global("quickshell:barToggle"))
 
       -- --- Brightness ---
-      hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set 5%+"), { repeating = true, locked = true })
-      hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { repeating = true, locked = true })
+      -- XF86MonBrightness{Up,Down} are already bound by end-4 (same flags); binding them again steps twice.
       hl.bind("SUPER + F6", hl.dsp.exec_cmd("${ext-brightness}/bin/ext-brightness up"))
       hl.bind("SUPER + F5", hl.dsp.exec_cmd("${ext-brightness}/bin/ext-brightness down"))
 
