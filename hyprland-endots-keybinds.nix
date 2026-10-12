@@ -44,6 +44,10 @@ in
           cursor = {
               no_hardware_cursors = 0,
           },
+          misc = {
+              -- Never let a window grab focus by requesting activation
+              focus_on_activate = false,
+          },
       })
 
       hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x0",    scale = "1" })
@@ -275,6 +279,10 @@ in
   # ---------------------------------------------------------------------------
   xdg.configFile."hypr/custom/rules.lua" = lib.mkForce {
     text = ''
+      -- Nothing steals focus on map, even when manually spawned. Must come
+      -- first so later rules can still override it.
+      hl.window_rule({ match = { class = ".*" }, no_initial_focus = true })
+
       hl.window_rule({ match = { class = "^com\\.mitchellh\\.ghostty$" }, workspace = "1"  })
       hl.window_rule({ match = { class = "^firefox$"                  }, workspace = "2"  })
       hl.window_rule({ match = { class = "^[Ss]tremio$"               }, workspace = "3"  })
