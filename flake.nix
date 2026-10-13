@@ -63,7 +63,7 @@
     };
 
     dotfiles = {
-      url = "git+https://github.com/end-4/dots-hyprland?submodules=1&ref=refs/heads/main&rev=c04b0bbc8143a2b2166c1f699f7583cb28ff78fe";
+      url = "git+https://github.com/end-4/dots-hyprland?submodules=1&ref=refs/heads/main&rev=2f2a376fdb2ad738bf55f693dd0b474b64bb0ab8";
       flake = false;
     };
 
