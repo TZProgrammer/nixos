@@ -14,6 +14,7 @@
     # Productivity
     obsidian
     kdePackages.dolphin
+    kdePackages.ark # also provides Dolphin's "Extract"/"Compress" context menu
     foliate
 
     # Media & Personal
