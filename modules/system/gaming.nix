@@ -22,6 +22,9 @@ in
   };
 
   programs.gamemode.enable = true;
+  # gamemode's polkit rule only lets the "gamemode" group switch the CPU
+  # governor etc.; without it every change fails with "Not authorized".
+  users.users.zegertho.extraGroups = [ "gamemode" ];
   programs.gamescope = {
     enable = true;
     capSysNice = true;
