@@ -87,7 +87,7 @@ in
       "chrome-flags.conf".source = "${dotfilesSource}/dots/.config/chrome-flags.conf";
       "code-flags.conf".source = "${dotfilesSource}/dots/.config/code-flags.conf";
       "darklyrc".source = "${dotfilesSource}/dots/.config/darklyrc";
-      "dolphinrc".source = "${dotfilesSource}/dots/.config/dolphinrc";
+      # dolphinrc handled in activation script (Dolphin writes to it)
       "foot".source = "${dotfilesSource}/dots/.config/foot";
       "fuzzel".source = "${dotfilesSource}/dots/.config/fuzzel";
       
@@ -254,6 +254,20 @@ in
       else
          # Ensure it's writable even if it exists
          $DRY_RUN_CMD chmod u+w "$targetPath/kdeglobals"
+      fi
+
+      # Handle dolphinrc (Mutable copy)
+      # If it's a symlink (likely from previous HM generation), remove it first
+      if [ -L "$targetPath/dolphinrc" ]; then
+          $DRY_RUN_CMD rm "$targetPath/dolphinrc"
+      fi
+
+      # We copy it if it doesn't exist (or was just removed); Dolphin saves its settings here
+      if [ ! -f "$targetPath/dolphinrc" ]; then
+         if [ -f "$configPath/dolphinrc" ]; then
+             $DRY_RUN_CMD cp "$configPath/dolphinrc" "$targetPath/dolphinrc"
+             $DRY_RUN_CMD chmod u+w "$targetPath/dolphinrc"
+         fi
       fi
 
       # Handle konsole directory (Mutable directory with managed files)
