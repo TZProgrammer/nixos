@@ -48,17 +48,17 @@
     # --- Inputs for the vendored illogical-flake home module ---
     # (formerly nested under illogical-flake/flake.nix; flattened so edits to
     # ./illogical-flake take effect immediately and there is a single lockfile.)
+    # quickshell and nur float with `nix flake update` like everything else.
     # dotfiles is pinned by rev: end-4/dots-hyprland restructures often and the
     # home module is hand-matched to it, so bump deliberately, not on every
-    # `nix flake update`. To bump: change the rev (or run
-    # `nix flake update quickshell nur dotfiles`) and re-check the module.
+    # `nix flake update`. To bump: change the rev and re-check the module.
     quickshell = {
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell?ref=refs/heads/master&rev=191085a8821b35680bba16ce5411fc9dbe912237";
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nur = {
-      url = "github:nix-community/NUR/0e6e5ff852c442598d1ae8ca5f042947f123f798";
+      url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
