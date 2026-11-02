@@ -11,13 +11,26 @@ let
     url = "https://github.com/Recol/DLSS-Updater/releases/download/V${dlssUpdaterVersion}/DLSS_Updater-${dlssUpdaterVersion}.flatpak";
     hash = "sha256-o4SVCfrGAaMim1jRS668E4hv0EDHZzAkXGqiCRrJ9aQ=";
   };
+
+  # nixpkgs lags upstream (GE-Proton11-7 at time of writing); pin the newer
+  # release until nixpkgs catches up. To bump: update the version, then
+  # refresh the hash with
+  #   nix-prefetch-url --unpack <release-url> | xargs nix hash convert --hash-algo sha256 --to sri
+  protonGeVersion = "GE-Proton11-11";
+  protonGe = pkgs.proton-ge-bin.overrideAttrs (_: {
+    version = protonGeVersion;
+    src = pkgs.fetchzip {
+      url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/${protonGeVersion}/${protonGeVersion}-x86_64.tar.gz";
+      hash = "sha256-3tVgf83IkteFtVo/bHd4yG1xCtPeuW8FXaTrHOLjvKQ=";
+    };
+  });
 in
 {
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
-    extraCompatPackages = with pkgs; [ proton-ge-bin ];
+    extraCompatPackages = [ protonGe ];
     gamescopeSession.enable = true;
   };
 
