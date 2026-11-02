@@ -56,6 +56,18 @@ in
   };
 
   # ---------------------------------------------------------------------------
+  # Hyprland 0.57 clamps decoration.shadow.render_power to 1-4; upstream
+  # hyprland/general.lua still sets 10, which errors on load. Patch it in place
+  # (overriding in custom/general.lua is too late — the error fires first).
+  # ---------------------------------------------------------------------------
+  xdg.configFile."hypr/hyprland/general.lua" = lib.mkForce {
+    text = builtins.replaceStrings
+      [ "render_power = 10" ]
+      [ "render_power = 4" ]
+      (builtins.readFile "${inputs.dotfiles}/dots/.config/hypr/hyprland/general.lua");
+  };
+
+  # ---------------------------------------------------------------------------
   # Disable idle locking: override hypridle.conf with no listeners
   # (hypridle.conf is still a .conf file in upstream.)
   # ---------------------------------------------------------------------------
