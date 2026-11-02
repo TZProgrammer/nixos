@@ -121,6 +121,11 @@ in
       hl.unbind("SUPER + Return")   -- was: launch $TERMINAL
       hl.unbind("CTRL + SUPER + R") -- was: restart QuickShell widgets
       hl.unbind("CTRL + SUPER + P") -- was: cycle panel family
+      -- was: toggle overview on Super release. Quickshell fires that release even
+      -- after a combo like SUPER+SPACE, and end-4 does not bind the interrupt.
+      -- The workspace-number binds on these keys are left in place.
+      hl.unbind("SUPER + SUPER_L")
+      hl.unbind("SUPER + SUPER_R")
 
       -- --- Focus movement (hjkl) ---
       hl.bind("SUPER + h", hl.dsp.focus({ direction = "left"  }))
