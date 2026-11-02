@@ -102,7 +102,9 @@ in
           hl.exec_cmd("[workspace 2 silent] firefox")
           hl.exec_cmd("[workspace 4 silent] vesktop")
           hl.exec_cmd("[workspace 5 silent] steam")
-          hl.exec_cmd("[workspace 7 silent] spotify")
+          -- Spotify shows "Something went wrong" if it starts before DNS works, and
+          -- at login AdGuard (the system resolver) is still waiting on Wi-Fi.
+          hl.exec_cmd("[workspace 7 silent] sh -c 'timeout 60 sh -c \"until getent hosts open.spotify.com >/dev/null; do sleep 1; done\"; exec spotify'")
           hl.exec_cmd("[workspace 10 silent] obsidian")
       end)
     '';
