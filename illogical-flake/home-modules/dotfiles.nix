@@ -111,7 +111,7 @@ in
         -- Injected Nix paths
         hl.env("PATH", "${config.home.homeDirectory}/.nix-profile/bin:/etc/profiles/per-user/${config.home.username}/bin:" .. (os.getenv("PATH") or ""))
         hl.env("XDG_DATA_DIRS", "${config.home.homeDirectory}/.nix-profile/share:${config.home.homeDirectory}/.local/share:/etc/profiles/per-user/${config.home.username}/share:/run/current-system/sw/share:${config.home.homeDirectory}/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:" .. (os.getenv("XDG_DATA_DIRS") or ""))
-        hl.env("QT_PLUGIN_PATH", "${config.home.homeDirectory}/.nix-profile/lib/qt-6/plugins:${config.home.homeDirectory}/.nix-profile/lib/plugins")
+        hl.env("QT_PLUGIN_PATH", "${config.home.homeDirectory}/.nix-profile/lib/qt-6/plugins:${config.home.homeDirectory}/.nix-profile/lib/plugins:/etc/profiles/per-user/${config.home.username}/lib/qt-6/plugins:/etc/profiles/per-user/${config.home.username}/lib/plugins")
         hl.env("QML2_IMPORT_PATH", "${config.home.homeDirectory}/.nix-profile/lib/qt-6/qml")
         hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
         hl.env("QT_QPA_PLATFORMTHEME", "gtk3")
