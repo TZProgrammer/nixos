@@ -63,11 +63,55 @@
     # are defined once in modules/system/graphics.nix.
   };
 
-  # Power profiles daemon for KDE/ROG integration
+  # Power profiles: power-profiles-daemon stays (the end-4 shell's toggle
+  # talks to it over D-Bus), but only drives platform_profile — i.e. the ASUS
+  # firmware power limits + fan curve. asusd owns the CPU energy preference
+  # (EPP) via platform_profile_linked_epp below. Before, both wrote EPP and
+  # Power Saver pinned it to "power", which makes the CPU very slow to ramp up
+  # (UI lag), even though the quiet fans come from the platform profile.
   services.power-profiles-daemon.enable = true;
+  systemd.services.power-profiles-daemon.serviceConfig.ExecStart = [
+    ""
+    "${config.services.power-profiles-daemon.package}/libexec/power-profiles-daemon --block-driver=intel_pstate"
+  ];
 
   services.asusd = {
     enable = true;
+    # Written as a mutable copy (mode 0644); rebuilds reset it to this.
+    asusdConfig.text = ''
+      (
+          charge_control_end_threshold: 90,
+          base_charge_control_end_threshold: 0,
+          disable_nvidia_powerd_on_battery: true,
+          ac_command: "",
+          bat_command: "",
+          platform_profile_linked_epp: true,
+          platform_profile_on_battery: Quiet,
+          change_platform_profile_on_battery: true,
+          platform_profile_on_ac: Performance,
+          // Off: plugging in must not jump to Performance (loud fans); the
+          // profile chosen in the shell is kept.
+          change_platform_profile_on_ac: false,
+          // Quiet keeps its low power limits + fan curve, but the CPU may
+          // boost for short bursts. Was Power (slowest ramp-up).
+          profile_quiet_epp: BalancePower,
+          profile_balanced_epp: BalancePower,
+          profile_custom_epp: Performance,
+          profile_performance_epp: Performance,
+          ac_profile_tunings: {
+              Balanced: (
+                  enabled: false,
+                  group: {},
+              ),
+              Performance: (
+                  enabled: false,
+                  group: {},
+              ),
+          },
+          dc_profile_tunings: {},
+          armoury_settings: {},
+      )
+    '';
   };
 
   zramSwap = {
