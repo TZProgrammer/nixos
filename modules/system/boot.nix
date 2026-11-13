@@ -43,6 +43,13 @@ in
     "kernel.split_lock_mitigate" = 0;          # Disables split-lock FPS penalty
     "kernel.sched_cfs_bandwidth_slice_us" = 3000; # SteamOS CFS bandwidth slicing
     "vm.compaction_proactiveness" = 0;         # Disable proactive memory compaction
+
+    # Tuned for zram (the primary swap, priority 100): swapping to zram is a
+    # cheap in-RAM compression, so prefer it over evicting file cache that
+    # would have to be re-read from disk. page-cluster 0 = read one page per
+    # swap-in; readahead only helps seek-bound disks, not zram.
+    "vm.swappiness" = 180;
+    "vm.page-cluster" = 0;
   };
 
   boot.kernelModules = [ "uinput" ];
