@@ -48,6 +48,14 @@ in
               -- Never let a window grab focus by requesting activation
               focus_on_activate = false,
           },
+          decoration = {
+              blur = {
+                  -- Upstream uses 3; 2 looks nearly identical but costs a
+                  -- third less GPU work per redraw, which matters here since
+                  -- eDP-1 frames are also copied from the NVIDIA GPU to Intel.
+                  passes = 2,
+              },
+          },
       })
 
       hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x0",    scale = "1" })
