@@ -7,6 +7,7 @@
     ./ghostty.nix
     ./kitty.nix
     ./vesktop.nix
+    ./learnharness.nix
   ];
 
   # --- GUI Packages ---
